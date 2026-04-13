@@ -1,0 +1,61 @@
+import users from "../models/user.models.js";
+import jwt from "jsonwebtoken";
+import configure from "../config/config.js";
+
+async function sendTokenResponse(user, res) {
+  const token = jwt.sign({ userid: user._id }, configure.JWT_SECRET, {
+    expiresIn: configure.JWT_EXPIRE,
+  });
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,
+  });
+
+  return token;
+}
+
+const userRegisterController = async (req, res) => {
+  try {
+    const { email, contact, password, fullName, isSeller } = req.body;
+
+    const userExists = await users.findOne({
+      $or: [{ email }, { contact }],
+    });
+
+    if (userExists) {
+      return res.status(400).json({
+        message: "User with this email or contact already exists",
+      });
+    }
+
+    const user = await users.create({
+      email,
+      contact,
+      password,
+      fullName,
+      role: isSeller ? "seller" : "buyer"
+    });
+
+    const token = await sendTokenResponse(user, res);
+
+    return res.status(201).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        _id: user._id,
+        email: user.email,
+        contact: user.contact,
+        fullName: user.fullName,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export { userRegisterController };

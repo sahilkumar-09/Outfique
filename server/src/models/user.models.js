@@ -1,0 +1,51 @@
+import mongoose, {Schema} from "mongoose"
+import bcrypt from "bcrypt"
+
+const userSchema = new Schema({
+    email: {
+        type: String,
+        required: [true, "Email is required"],
+        unique: [true, "Email is already exists"],
+        trim: true,
+        match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email"]
+    },
+    contact: {
+        type: String,
+        required: [true, "Contact is required"],
+        unique: [true, "Contact is already exists"],
+        trim: true,
+        match: [/^\d{10}$/, "Please enter a valid contact number"]
+    },
+    password: {
+        type: String,
+        required: [true, "Password is required"],
+        trim: true,
+    },
+    fullName: {
+        type: String,
+        required: [true, "Full name is required"],
+        trim: true,
+    },
+    role: {
+        type: String,
+        enum: ["buyer", "seller"],
+        default: "buyer"
+    }
+},
+{
+    timestamps: true
+}
+)
+
+userSchema.pre("save", async function () {
+    if (!this.isModified("password")) return
+    
+    this.password = await bcrypt.hash(this.password, 10)
+})
+
+userSchema.methods.comparePassword = async function (password) {
+    return await bcrypt.compare(password, this.password)
+}
+
+const users = mongoose.model("user", userSchema)
+export default users
