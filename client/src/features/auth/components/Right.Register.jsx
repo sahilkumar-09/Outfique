@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
+import { useAuth } from "../hooks/useAuth";
 
 const Right = () => {
+
+  const {handleRegister} = useAuth()
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -24,24 +28,32 @@ const Right = () => {
     });
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async(e) => {
     e.preventDefault();
-
+     console.log("FORM DATA:", formData); 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
-      setError("");
-      setFormData({
-        fullName: "",
-        email: "",
-        contact: "",
-        password: "",
-        confirmPassword: "",
-        isSeller: false,
-      })
-    console.log("Form Data -> ", formData);
+    const data = await handleRegister({
+      email: formData.email,
+      contact: formData.contact,
+      password: formData.password,
+      fullName: formData.fullName,
+      isSeller: formData.isSeller,
+    })
+
+    // console.log(data)
+    //   setError("");
+    //   setFormData({
+    //     fullName: "",
+    //     email: "",
+    //     contact: "",
+    //     password: "",
+    //     confirmPassword: "",
+    //     isSeller: false,
+    //   })
   };
 
   return (

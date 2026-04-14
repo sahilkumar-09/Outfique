@@ -1,13 +1,13 @@
 import axios from "axios"
 
 const authApiInstance = axios.create({
-    baseURL: "http://localhost:3000/api/v1/auth",
-    withCredentials: true
-})
+  baseURL: "http://localhost:3000/api/v1/auth/user",
+  withCredentials: true,
+});
 
 export const register = async ({ email, contact, password, fullName, isSeller }) => {
     try {
-        const response = await authApiInstance.post("/user/register", {
+        const response = await authApiInstance.post("/register", {
             email,
             contact,
             password,

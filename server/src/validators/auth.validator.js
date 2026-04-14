@@ -15,28 +15,35 @@ export const validate = (req, res, next) => {
 
 export const validateRegister = [
   body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
     .isEmail()
-    .withMessage("Invalid email format")
-    .trim()
-    .notEmpty()
-    .withMessage("Email is required"),
+    .withMessage("Invalid email format"),
+
   body("contact")
+    .custom((value)=>String(value))
+    .trim()
+    .notEmpty()
+    .withMessage("Contact is required")
     .matches(/^\d{10}$/)
-    .trim()
-    .notEmpty()
-    .withMessage("Invalid contact format"),
+    .withMessage("Contact must be exactly 10 digits"),
+
   body("password")
+    .trim()
+    .notEmpty()
+    .withMessage("Password is required")
     .isLength({ min: 8 })
-    .trim()
-    .notEmpty()
-    .withMessage("Invalid password format"),
+    .withMessage("Password must be at least 8 characters"),
+
   body("fullName")
-    .isLength({ min: 2 })
     .trim()
     .notEmpty()
-    .withMessage("Invalid full name format"),
-  body("isSeller")
-    .isBoolean()
-    .withMessage("isSeller must be an boolean value"),
+    .withMessage("Full name is required")
+    .isLength({ min: 2 })
+    .withMessage("Full name must be at least 2 characters"),
+
+  body("isSeller").optional().toBoolean(),
+
   validate,
 ];

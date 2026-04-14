@@ -41,14 +41,13 @@ const userRegisterController = async (req, res) => {
 
     return res.status(201).json({
       message: "User registered successfully",
-      token,
       user: {
         _id: user._id,
         email: user.email,
         contact: user.contact,
         fullName: user.fullName,
         role: user.role,
-      },
+      }
     });
   } catch (error) {
     return res.status(500).json({
