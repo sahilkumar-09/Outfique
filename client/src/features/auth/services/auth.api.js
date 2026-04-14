@@ -19,3 +19,12 @@ export const register = async ({ email, contact, password, fullName, isSeller })
         throw error
     }
 }
+
+export const login = async ({ email, password }) => {
+    try {
+        const response = await authApiInstance.post("/login", { email, password })
+        return response.data
+    } catch (error) {
+        throw error
+    }
+}

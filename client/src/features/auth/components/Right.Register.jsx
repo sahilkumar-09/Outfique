@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 
 const Right = () => {
+
+  const navigate = useNavigate()
 
   const {handleRegister} = useAuth()
 
@@ -30,7 +32,7 @@ const Right = () => {
 
   const submitHandler = async(e) => {
     e.preventDefault();
-     console.log("FORM DATA:", formData); 
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -43,17 +45,16 @@ const Right = () => {
       fullName: formData.fullName,
       isSeller: formData.isSeller,
     })
-
-    // console.log(data)
-    //   setError("");
-    //   setFormData({
-    //     fullName: "",
-    //     email: "",
-    //     contact: "",
-    //     password: "",
-    //     confirmPassword: "",
-    //     isSeller: false,
-    //   })
+    navigate("/")
+      setError("");
+      setFormData({
+        fullName: "",
+        email: "",
+        contact: "",
+        password: "",
+        confirmPassword: "",
+        isSeller: false,
+      })
   };
 
   return (
@@ -159,15 +160,19 @@ const Right = () => {
                 </button>
               </div>
 
-              <div>
+              <div className="flex">
                 <input
+                  id="isSeller"
                   type="checkbox"
                   name="isSeller"
                   checked={formData.isSeller || false}
                   onChange={handleChange}
-                  className="w-4 h-4 cursor-pointer text-yellow-500 bg-gray-900 border-gray-700 rounded focus:ring-yellow-500"
+                  className="w-5 h-5 text-yellow-500 cursor-pointer font-medium accent-yellow-500 "
                 />
-                <label className="ml-2 text-sm cursor-pointer font-medium text-gray-400">
+                <label
+                  htmlFor="isSeller"
+                  className="ml-2 text-sm cursor-pointer font-medium text-zinc-500"
+                >
                   Register as a seller
                 </label>
               </div>
