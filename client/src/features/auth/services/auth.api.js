@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const authApiInstance = axios.create({
-  baseURL: "http://localhost:3000/api/v1/auth/user",
+  baseURL: "/api/auth",
   withCredentials: true,
 });
 
@@ -27,4 +27,4 @@ export const login = async ({ email, password }) => {
     } catch (error) {
         throw error
     }
-}
+}   

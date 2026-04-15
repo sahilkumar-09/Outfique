@@ -11,13 +11,14 @@ const router = Router()
  * @Register_Routes
  * @POST
  */
-router.post("/user/register", validateRegister, userRegisterController);
+router.post("/register", validateRegister, userRegisterController);
 
 /**
  * @Login_Routes
  * @POST 
  */
 
-router.post("/user/login", validatorLoginUser, userLoginController);
+router.post("/login", validatorLoginUser, userLoginController);
+
 
 export default router

@@ -30,6 +30,7 @@ const Right = () => {
     });
   };
 
+
   const submitHandler = async(e) => {
     e.preventDefault();
 
@@ -63,7 +64,9 @@ const Right = () => {
         <p className="text-yellow-500 tracking-widest uppercase text-xs mb-2">
           Registration
         </p>
-        <h1 className="text-3xl font-semibold tracking-wider mb-6 ">Create your account</h1>
+        <h1 className="text-3xl font-semibold tracking-wider mb-6 ">
+          Create your account
+        </h1>
 
         <form className="space-y-6" onSubmit={submitHandler}>
           <div className="md:grid-cols-2 gap-5 flex flex-col ">
@@ -197,6 +200,7 @@ const Right = () => {
               Login
             </Link>
           </p>
+
         </form>
       </div>
     </div>

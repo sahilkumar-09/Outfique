@@ -15,6 +15,10 @@ const sendTokenResponse = async(user, res) => {
   return token;
 }
 
+/**
+ * @Register Controller
+ */
+
 const userRegisterController = async (req, res) => {
   try {
     const { email, contact, password, fullName, isSeller } = req.body;
@@ -57,6 +61,10 @@ const userRegisterController = async (req, res) => {
   }
 
 };
+
+/**
+ * @Login Controller
+ */
 
 const userLoginController = async (req, res) => {
 
