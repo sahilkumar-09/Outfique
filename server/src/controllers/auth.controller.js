@@ -104,6 +104,18 @@ const userLoginController = async (req, res) => {
     });
   }
   
+
+  
 }
 
-export { userRegisterController, userLoginController };
+/**
+ * @GoogleSuccess controller
+ */
+
+const googleSuccessController = (req, res) => {
+  const user = req.user
+  console.log(user)
+  res.redirect("http://localhost:5173/");
+};
+
+export { userRegisterController, userLoginController, googleSuccessController };

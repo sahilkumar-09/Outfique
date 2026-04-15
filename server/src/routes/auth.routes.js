@@ -3,6 +3,7 @@ import { validateRegister, validatorLoginUser } from "../validators/auth.validat
 import {
   userRegisterController,
   userLoginController,
+  googleSuccessController
 } from "../controllers/auth.controller.js";
 import passport from "passport";
 
@@ -27,9 +28,7 @@ router.get("/google", passport.authenticate("google", {
 
 router.get("/google/callback",
   passport.authenticate("google", { session: false, failureRedirect: "http://localhost:5173/auth/user/login" }),
-  (req, res) => {
-    res.redirect("http://localhost:5173/dashboard")
-  }
+  googleSuccessController
 )
 
 
