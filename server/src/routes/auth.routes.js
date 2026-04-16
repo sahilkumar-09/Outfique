@@ -6,6 +6,7 @@ import {
   googleSuccessController
 } from "../controllers/auth.controller.js";
 import passport from "passport";
+import configure from "../config/config.js"
 
 const router = Router()
 
@@ -27,9 +28,8 @@ router.get("/google", passport.authenticate("google", {
 }))
 
 router.get("/google/callback",
-  passport.authenticate("google", { session: false, failureRedirect: "http://localhost:5173/auth/user/login" }),
+  passport.authenticate("google", { session: false, failureRedirect: configure.NODE_ENV === "development" ? "http://localhost:5173/auth/user/login" : "/login" }),
   googleSuccessController
 )
-
 
 export default router

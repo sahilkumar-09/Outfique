@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Link, useNavigate } from "react-router";
+import ContinueWithGoogle from "./ContinueWithGoogle";
 
 const Right = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const Right = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const data = await handleLogin({
+    await handleLogin({
       email,
       password,
     });
@@ -82,6 +83,8 @@ const Right = () => {
               Sign Up
             </Link>
           </p>
+
+          <ContinueWithGoogle/>
         </form>
       </div>
     </div>

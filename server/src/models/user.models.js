@@ -12,14 +12,16 @@ const userSchema = new Schema(
     },
     contact: {
       type: String,
-      required: [true, "Contact is required"],
+      required: false,
       unique: [true, "Contact is already exists"],
       trim: true,
       match: [/^\d{10}$/, "Contact must be exactly 10 digits"],
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: function(){
+        return !this.googleId
+      },
       trim: true,
     },
     fullName: {
@@ -32,6 +34,10 @@ const userSchema = new Schema(
       enum: ["buyer", "seller"],
       default: "buyer",
     },
+    googleId: {
+      type: String,
+
+    }
   },
   {
     timestamps: true,

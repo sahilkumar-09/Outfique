@@ -103,19 +103,40 @@ const userLoginController = async (req, res) => {
       error: error.message,
     });
   }
-  
-
-  
-}
+};
 
 /**
  * @GoogleSuccess controller
  */
 
-const googleSuccessController = (req, res) => {
-  const user = req.user
-  console.log(user)
-  res.redirect("http://localhost:5173/");
+const googleSuccessController =async (req, res) => {
+    const {id, displayName, emails, photos} = req.user
+    const email = emails[0].value
+    const profilePic = photos[0].value
+
+
+    let user = await users.findOne({email})
+
+    if(!user){
+      user = await users.create({
+        email,
+        googleId: id,
+        fullName: displayName
+      })
+    }
+    
+    const token = jwt.sign({
+      id: user._id
+    }, configure.JWT_SECRET, 
+  {
+    expiresIn: configure.JWT_EXPIRE
+  })
+
+  res.cookie("token", token)
+
+  res.redirect("http://localhost:5173/")
 };
 
-export { userRegisterController, userLoginController, googleSuccessController };
+export {
+  userRegisterController, userLoginController, googleSuccessController
+};
