@@ -19,7 +19,7 @@ const sellerMiddleware = async (req, res, next) => {
         message: "Unauthorized access",
       });
     }
-    const user = await users.findById(decodeToken.id);
+    const user = await users.findById(decodedToken.id);
     if (!user) {
       return res.status(401).json({
         success: false,

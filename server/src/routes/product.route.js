@@ -15,6 +15,6 @@ const router = express.Router()
 /**
  * @Create product api
  */
-router.post("/", sellerMiddleware, upload.array("image", 7), createProductController)
+router.post("/", sellerMiddleware, upload.array("productImages", 7), createProductController)
 
 export default router

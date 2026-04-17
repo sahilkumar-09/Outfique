@@ -3,7 +3,7 @@ import { uploadImage } from "../services/storage.service.js"
 
 const createProductController = async (req, res) => {
     try {
-        const { title, description, price } = req.body
+        const { title, description, amount, currency } = req.body
         const seller = req.user
         const images = await Promise.all(req.files.map(async (file) => {
             return await uploadImage({
@@ -17,8 +17,8 @@ const createProductController = async (req, res) => {
             title, 
             description,
             price: {
-                amount: price.amount || price,
-                currency: price.currency || "INR"
+                amount,
+                currency
             },
             productImages: images,
             seller: seller._id
