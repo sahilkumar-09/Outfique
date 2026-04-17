@@ -17,7 +17,7 @@ const router = express.Router()
  * @Create product api
  * @POST
  */
-router.post("/", sellerMiddleware, createProductValidator, upload.array("productImages", 7), createProductController)
+router.post("/", sellerMiddleware, upload.array("productImages", 7),createProductValidator, createProductController)
 
 /**
  * @Get All product api

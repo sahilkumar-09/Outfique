@@ -1,286 +1,219 @@
-import { useState, useRef } from "react";
+import React, { useState } from 'react';
+import { useProduct } from '../hooks/useProduct';
+import {useNavigate} from "react-router"
 
-const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "INR", "AED", "CHF"];
-
-export default function CreateProduct() {
+const CreateProduct = () => {
   const [images, setImages] = useState([]);
-  const [dragging, setDragging] = useState(false);
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     title: "",
-    curator: "",
     description: "",
     price: "",
-    currency: "USD",
-  });
-  const fileInputRef = useRef(null);
+    currency: "",
+  })
 
-  const handleFiles = (files) => {
-    const urls = Array.from(files)
-      .filter((f) => f.type.startsWith("image/"))
-      .map((f) => URL.createObjectURL(f));
-    setImages((prev) => [...prev, ...urls]);
+  const onChangeHandler = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (images.length + files.length > 7) {
+      alert('You can only select up to 7 images in total.');
+      e.target.value = '';
+      return; 
+    }
+    
+    const newImages = files.map(file => ({
+      file,
+      url: URL.createObjectURL(file)
+    }));
+    
+    setImages(prev => [...prev, ...newImages]);
+    e.target.value = ''; 
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
-    handleFiles(e.dataTransfer.files);
+  const removeImage = (indexToRemove) => {
+    setImages(prev => {
+      const newImages = [...prev];
+      URL.revokeObjectURL(newImages[indexToRemove].url);
+      newImages.splice(indexToRemove, 1);
+      return newImages;
+    });
   };
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  const {handleCreateProducts} = useProduct()
+  const navigate = useNavigate()
+
+  const submitHandler = async (e) => {
+    e.preventDefault()
+    
+    const fd = new FormData()
+    fd.append("title", formData.title)
+    fd.append("description", formData.description)
+    fd.append("price", formData.price)
+    fd.append("currency", formData.currency)
+    
+    images.forEach(img => {
+      fd.append("productImages", img.file)
+    })
+
+    try {
+      const data = await handleCreateProducts(fd)
+      if (data) {
+        navigate("/")
+      } else {
+        navigate("/seller/create-product")
+      }
+      
+      setFormData({
+        title: "",
+        description: "",
+        price: "",
+        currency: "",
+      })
+      setImages([])
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
-    <div
-      className="min-h-screen font-sans"
-      style={{ backgroundColor: "#131313", color: "#f0f0f0" }}
-    >
-      <div className="max-w-2xl mx-auto px-5 py-10 pb-16 ">
-        {/* Header */}
-        <p
-          className="text-[10px] tracking-[0.18em] uppercase font-semibold mb-2"
-          style={{ color: "#ffffff" }}
-        >
-          Inventory Management
-        </p>
-        <h1
-          className="text-[2rem] sm:text-[2.5rem] font-bold leading-tight tracking-tight"
-          style={{ color: "#ffffff" }}
-        >
-          Add a New Piece
-        </h1>
-        <div
-          className=" h-[2px] mb-8 mt-3"
-          style={{ backgroundColor: "#ffffff" }}
-        />
-        <form action="">
-          {/* Image Upload */}
-          <div
-            className="p-5 mb-4 border"
-            style={{ borderColor: "#2e2e2e", backgroundColor: "#1a1a1a" }}
-          >
-            <p
-              className="text-[10px] tracking-[0.14em] uppercase font-semibold mb-3"
-              style={{ color: "#9a9a9a" }}
-            >
-              Product Imagery
-            </p>
-
-            {images.length > 0 && (
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-3">
-                {images.map((src, i) => (
-                  <div
-                    key={i}
-                    className="relative aspect-square overflow-hidden group"
-                    style={{ border: "1px solid #2e2e2e" }}
-                  >
-                    <img
-                      src={src}
-                      alt=""
-                      className="w-full h-full object-cover grayscale"
-                    />
-                    <button
-                      onClick={() =>
-                        setImages((p) => p.filter((_, j) => j !== i))
-                      }
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-lg"
-                      style={{ backgroundColor: "rgba(0,0,0,0.65)" }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div
-              onClick={() => fileInputRef.current.click()}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setDragging(true);
-              }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={handleDrop}
-              className="flex flex-col items-center justify-center gap-2 py-12 cursor-pointer transition-all duration-200"
-              style={{
-                border: `1px dashed ${dragging ? "#ffffff" : "#3e3e3e"}`,
-                backgroundColor: dragging ? "#1f1f1f" : "#161616",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "#ffffff";
-                e.currentTarget.style.backgroundColor = "#1c1c1c";
-              }}
-              onMouseLeave={(e) => {
-                if (!dragging) {
-                  e.currentTarget.style.borderColor = "#3e3e3e";
-                  e.currentTarget.style.backgroundColor = "#161616";
-                }
-              }}
-            >
-              <svg
-                className="w-8 h-8"
-                style={{ color: "#ffffff" }}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path
-                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center p-6 font-sans selection:bg-yellow-500/30">
+      <div className="w-full max-w-4xl bg-[#111111] border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+        
+        <div className="relative z-10 flex flex-col gap-10">
+          <div className="space-y-2">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
+              Create Product
+            </h1>
+            <p className="text-gray-400 text-lg">Add a new item to your inventory</p>
+          </div>
+          
+          <form className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8" onSubmit={submitHandler}>
+            {/* Left Column */}
+            <div className="space-y-6">
+              <div className="space-y-2 flex flex-col">
+                <label htmlFor="title" className="text-sm font-medium text-gray-300 ml-1">Product Title</label>
+                <input 
+                  type="text" 
+                  name="title" 
+                  id="title" 
+                  value={formData.title}
+                  onChange={onChangeHandler}
+                  className="bg-white/5 border border-white/10 focus:border-yellow-500 focus:bg-white/10 rounded-xl px-4 py-3 outline-none transition-all duration-300 text-white placeholder-gray-500 w-full"
+                  placeholder="e.g. Minimalist Watch" 
                 />
-              </svg>
-              <p
-                className="text-sm text-center leading-relaxed"
-                style={{ color: "#6a6a6a" }}
-              >
-                Drag &amp; Drop visual assets here
-                <br />
-                <span
-                  className="underline underline-offset-2 cursor-pointer"
-                  style={{ color: "#d0d0d0" }}
-                >
-                  or browse stellar files
-                </span>
-              </p>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={(e) => handleFiles(e.target.files)}
-              />
-            </div>
-          </div>
+              </div>
 
-          {/* Details Card */}
-          <div
-            className="p-5 mb-4 flex flex-col gap-5 border"
-            style={{ borderColor: "#2e2e2e", backgroundColor: "#1a1a1a" }}
-          >
-            <div>
-              <label
-                className="block text-[10px] tracking-[0.14em] uppercase font-semibold mb-2"
-                style={{ color: "#9a9a9a" }}
-              >
-                Piece Title
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                placeholder="e.g. Midnight Velvet Blazer"
-                className="w-full px-0 py-2 text-sm outline-none transition-colors duration-200"
-                style={{
-                  backgroundColor: "transparent",
-                  borderBottom: "1px solid #2e2e2e",
-                  color: "#f0f0f0",
-                }}
-                onFocus={(e) => (e.target.style.borderBottomColor = "#ffffff")}
-                onBlur={(e) => (e.target.style.borderBottomColor = "#2e2e2e")}
-              />
-            </div>
+              <div className="space-y-2 flex flex-col">
+                <label htmlFor="description" className="text-sm font-medium text-gray-300 ml-1">Description</label>
+                <textarea 
+                  name="description" 
+                  id="description" 
+                  rows="4"
+                  value={formData.description}
+                  onChange={onChangeHandler}
+                  className="bg-white/5 border border-white/10 focus:border-yellow-500 focus:bg-white/10 rounded-xl px-4 py-3 outline-none transition-all duration-300 text-white placeholder-gray-500 w-full resize-none"
+                  placeholder="Detailed description of the product..."
+                ></textarea>
+              </div>
 
-            <div style={{ borderTop: "1px solid #222222" }} />
-
-            <div>
-              <label
-                className="block text-[10px] tracking-[0.14em] uppercase font-semibold mb-2"
-                style={{ color: "#9a9a9a" }}
-              >
-                Editorial Description
-              </label>
-              <textarea
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-                rows={5}
-                placeholder="Describe the silhouette, fabric sourcing, and inspiration behind this piece..."
-                className="w-full px-3.5 py-2.5 text-sm outline-none resize-y leading-relaxed transition-colors duration-200"
-                style={{
-                  backgroundColor: "#161616",
-                  border: "1px solid #2e2e2e",
-                  color: "#f0f0f0",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "#ffffff")}
-                onBlur={(e) => (e.target.style.borderColor = "#2e2e2e")}
-              />
-            </div>
-          </div>
-
-          {/* Pricing Card */}
-          <div
-            className="p-5 mb-8 border"
-            style={{ borderColor: "#2e2e2e", backgroundColor: "#1a1a1a" }}
-          >
-            <p
-              className="text-[10px] tracking-[0.14em] uppercase font-semibold mb-3"
-              style={{ color: "#9a9a9a" }}
-            >
-              Retail Value
-            </p>
-            <div className="grid grid-cols-[1fr_130px] sm:grid-cols-[1fr_150px] gap-3">
-              <input
-                type="number"
-                name="price"
-                value={form.price}
-                onChange={handleChange}
-                placeholder="0.00"
-                min="0"
-                step="0.01"
-                className="w-full px-3.5 py-2.5 text-sm outline-none transition-colors duration-200"
-                style={{
-                  backgroundColor: "#161616",
-                  border: "1px solid #2e2e2e",
-                  color: "#f0f0f0",
-                }}
-                onFocus={(e) => (e.target.style.borderColor = "#ffffff")}
-                onBlur={(e) => (e.target.style.borderColor = "#2e2e2e")}
-              />
-              <div className="relative">
-                <select
-                  name="currency"
-                  value={form.currency}
-                  onChange={handleChange}
-                  className="w-full appearance-none px-3.5 py-2.5 text-sm outline-none cursor-pointer pr-8 transition-colors duration-200"
-                  style={{
-                    backgroundColor: "#161616",
-                    border: "1px solid #2e2e2e",
-                    color: "#f0f0f0",
-                  }}
-                  onFocus={(e) => (e.target.style.borderColor = "#ffffff")}
-                  onBlur={(e) => (e.target.style.borderColor = "#2e2e2e")}
-                >
-                  {CURRENCIES.map((c) => (
-                    <option
-                      key={c}
-                      value={c}
-                      style={{ backgroundColor: "#1a1a1a" }}
-                    >
-                      {c}
-                    </option>
-                  ))}
-                </select>
-                <span
-                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs"
-                  style={{ color: "#9a9a9a" }}
-                >
-                  ▾
-                </span>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2 flex flex-col">
+                  <label htmlFor="price" className="text-sm font-medium text-gray-300 ml-1">Price ($)</label>
+                  <input 
+                    type="number" 
+                    name="price" 
+                    id="price" 
+                    value={formData.price}
+                    onChange={onChangeHandler}
+                    className="bg-white/5 border border-white/10 focus:border-yellow-500 focus:bg-white/10 rounded-xl px-4 py-3 outline-none transition-all duration-300 text-white placeholder-gray-500 w-full"
+                    placeholder="0.00" 
+                  />
+                </div>
+                <div className="space-y-2 flex flex-col">
+                  <label htmlFor="currency" className="text-sm font-medium text-gray-300 ml-1">Currency</label>
+                  <select 
+                    name="currency" 
+                    id="currency"
+                    value={formData.currency}
+                    onChange={onChangeHandler}
+                    className="bg-white/5 border border-white/10 focus:border-yellow-500 focus:bg-white/10 rounded-xl px-4 py-3 outline-none transition-all duration-300 text-white w-full appearance-none group"
+                  >
+                    <option value="" className="text-black">Select Currency</option>
+                    <option value="INR" className="text-black">INR (₹)</option>
+                    <option value="USD" className="text-black">USD ($)</option>
+                    <option value="EUR" className="text-black">EUR (€)</option>
+                    <option value="GBP" className="text-black">GBP (£)</option>
+                    <option value="JPY" className="text-black">JPY (¥)</option>
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Publish Button */}
-          <button className="w-full py-4 font-semibold text-sm tracking-[0.12em] uppercase transition-all duration-200 active:scale-[0.99] bg-yellow-500 text-black rounded-xl cursor-pointer hover:bg-yellow-600">
-            Publish Piece
-          </button>
-        </form>
+            {/* Right Column */}
+            <div className="space-y-6 flex flex-col justify-between">
+              <div className="space-y-2 flex flex-col h-full">
+                <label htmlFor="images" className="text-sm font-medium text-gray-300 ml-1">Product Images ({images.length}/7)</label>
+                <div className="flex flex-col gap-4 grow">
+                  <div className="flex items-center justify-center border-2 border-dashed border-white/20 rounded-2xl bg-white/5 hover:bg-white/10 hover:border-yellow-500/50 transition-all duration-300 cursor-pointer relative group min-h-[160px]">
+                    <input 
+                      type="file" 
+                      name="productImages" 
+                      id="images" 
+                      multiple 
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="flex flex-col items-center justify-center space-y-3 group-hover:scale-105 transition-transform duration-300">
+                      <div className="p-4 bg-yellow-500/20 rounded-full text-yellow-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-gray-300 font-medium tracking-wide">Drop images here</p>
+                        <p className="text-gray-500 text-sm mt-1">or click to browse</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {images.length > 0 && (
+                    <div className="grid grid-cols-4 gap-3">
+                      {images.map((img, index) => (
+                        <div key={index} className="relative group aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/10">
+                          <img src={img.url} alt={`preview ${index}`} className="w-full h-full object-cover" />
+                          <button 
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="absolute top-1 right-1 bg-red-500/90 hover:bg-red-600 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <button 
+                  type="submit" 
+                  className="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-yellow-500/30 transform hover:-translate-y-1 transition-all duration-300 outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-[#111111]"
+                >
+                  Create Product
+                  </button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  );
+  )
 }
+
+export default CreateProduct;
