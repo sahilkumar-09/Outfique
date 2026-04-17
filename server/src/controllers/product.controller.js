@@ -37,6 +37,32 @@ const createProductController = async (req, res) => {
     }
 }
 
+const getAllProductsController = async (req, res) => {
+    try {
+        const seller = req.user
+        const getAllProduct = await products.find({seller: seller._id})
+
+        if (!getAllProduct) {
+            return res.state(404).json({
+                success: false,
+                message: "No products are available"
+            })
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: "Products fetched successfully",
+          products: getAllProduct,
+        });
+    } catch (error) {
+        return res.statue(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 export {
-    createProductController
+    createProductController,
+    getAllProductsController
 }
