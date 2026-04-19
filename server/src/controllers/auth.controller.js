@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import configure from "../config/config.js";
 
 const sendTokenResponse = async(user, res) => {
-  const token = jwt.sign({ userid: user._id }, configure.JWT_SECRET, {
+  const token = jwt.sign({ id: user._id }, configure.JWT_SECRET, {
     expiresIn: configure.JWT_EXPIRE,
   });
 

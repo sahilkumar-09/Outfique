@@ -12,13 +12,7 @@ const sellerMiddleware = async (req, res, next) => {
       });
     }
     const decodedToken = jwt.verify(token, configure.JWT_SECRET);
-
-    if (!decodedToken) {
-      return res.send(401).json({
-        success: false,
-        message: "Unauthorized access",
-      });
-    }
+    console.log(decodedToken)
     const user = await users.findById(decodedToken.id);
     if (!user) {
       return res.status(401).json({
@@ -35,7 +29,7 @@ const sellerMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    return res.status(500).json({
+    return res.status(401).json({
       success: false,
       message: error.message,
     });

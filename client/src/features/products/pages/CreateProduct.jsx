@@ -7,7 +7,7 @@ const CreateProduct = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    price: "",
+    amount: "",
     currency: "",
   })
 
@@ -50,7 +50,7 @@ const CreateProduct = () => {
     const fd = new FormData()
     fd.append("title", formData.title)
     fd.append("description", formData.description)
-    fd.append("price", formData.price)
+    fd.append("amount", formData.amount)
     fd.append("currency", formData.currency)
     
     images.forEach(img => {
@@ -68,7 +68,7 @@ const CreateProduct = () => {
       setFormData({
         title: "",
         description: "",
-        price: "",
+        amount: "",
         currency: "",
       })
       setImages([])
@@ -120,12 +120,12 @@ const CreateProduct = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2 flex flex-col">
-                  <label htmlFor="price" className="text-sm font-medium text-gray-300 ml-1">Price ($)</label>
+                  <label htmlFor="amount" className="text-sm font-medium text-gray-300 ml-1">amount ($)</label>
                   <input 
                     type="number" 
-                    name="price" 
-                    id="price" 
-                    value={formData.price}
+                    name="amount" 
+                    id="amount" 
+                    value={formData.amount}
                     onChange={onChangeHandler}
                     className="bg-white/5 border border-white/10 focus:border-yellow-500 focus:bg-white/10 rounded-xl px-4 py-3 outline-none transition-all duration-300 text-white placeholder-gray-500 w-full"
                     placeholder="0.00" 
