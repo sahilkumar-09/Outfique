@@ -1,21 +1,42 @@
+// ─── Left.Register.jsx ───────────────────────────────────────────────────────
 import React from "react";
 
-const Left = () => {
+export const Left = () => {
   return (
-    <div className="relative group lg:w-1/2 h-[50vh] lg:h-auto md:h-auto flex ">
+    // hidden on mobile, visible from lg breakpoint
+    <div className="relative hidden h-auto  w-full md:w-1/2
+ lg:block lg:w-1/2 overflow-hidden">
       <img
-        className="grayscale group-hover:grayscale-0 transition duration-500 ease-in-out blur-[1px]group-hover:blur-none  w-full h-auto object-cover"
+        className="w-full h-full object-cover grayscale-[15%] brightness-[0.85] transition-all duration-700"
         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMMaxdCACe_dAs_BWPKjx5paDm6QjrCIMHXDiDoQdviHGRz46q_Xaw95ECAbMoa-QkziNc-dzjKyBOvgTnViIB8p5mjzQC1HbEScaGj7I7yrAZuLJFx3rzE4Goi_SBLatrRFj7Ed8Y9JaWeMKwq0cFkP1emsa2br7nbsoQTWWzAYM6NwfxYDjiIfG4RaIXPmUx-vNYs0b01opN2ywLu0WniPZZTonAn30WujJ7cE7wwLFby6Sv8Imklfi_p0XCYp_gk5FUbdOOxRY"
-        alt=""
+        alt="Fashion model"
       />
-      <h1 className="absolute top-2 left-2 text-yellow-500 text-xl font-medium uppercase tracking-widest">
+
+      {/* Dark gradient overlay at bottom */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+      {/* Brand name top-left */}
+      <span
+        className="absolute top-8 left-10 text-[#f0ede8] text-[0.62rem] tracking-[0.35em] uppercase font-semibold"
+        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+      >
         Outfique
-      </h1>
-      <div className="absolute inset-0 flex flex-col justify-end p-6 lg:p-12">
-        <h1 className="text-3xl lg:text-5xl font-bold tracking-wide hover:scale-115 transition-all duration-600 w-fit cursor-auto">
-          THE DIGITAL ATELIER
-        </h1>
-        <p className="mt-3 text-sm lg:text-base text-gray-300 max-w-md">
+      </span>
+
+      {/* Bottom tagline */}
+      <div className="absolute bottom-12 left-10 right-10">
+        <h2
+          className="text-[2.6rem] font-bold text-[#f0ede8] uppercase tracking-widest leading-[1.1] mb-3"
+          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+        >
+          The Digital
+          <br />
+          Atelier
+        </h2>
+        <p
+          className="text-[0.85rem] text-[#f0ede8]/75 leading-relaxed max-w-xs font-light"
+          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+        >
           Exclusive access to bespoke collections and curated noir aesthetics.
           Join the circle of the refined.
         </p>

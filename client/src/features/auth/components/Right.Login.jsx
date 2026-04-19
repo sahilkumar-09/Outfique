@@ -13,78 +13,102 @@ const Right = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    await handleLogin({
-      email,
-      password,
-    });
-
-    navigate("/")
-
-    setEmail("")
-    setPassword("")
-    
+    await handleLogin({ email, password });
+    navigate("/");
+    setEmail("");
+    setPassword("");
   };
 
   return (
-    <div className="lg:w-1/2 w-full flex items-center justify-center px-6 py-10 lg:px-16">
+    <div
+      className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 lg:px-16 bg-[#f0ede8] min-h-screen"
+      style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+    >
       <div className="w-full max-w-md">
-        <p className="text-yellow-500 tracking-widest uppercase text-xs mb-2">
-          Login
+        {/* Eyebrow */}
+        <p className="text-[0.65rem] tracking-[0.28em] uppercase text-[#8a7f6e] mb-2">
+          Welcome Back
         </p>
-        <h1 className="text-3xl font-bold mb-6">Welcome Back</h1>
+
+        {/* Heading */}
+        <h1 className="text-4xl font-semibold tracking-wide text-[#1c1c1c] mb-1">
+          Sign In
+        </h1>
+
+        {/* Divider */}
+        <div className="w-10 h-px bg-[#c4b99a] mt-3 mb-8" />
+
         <form className="space-y-6" onSubmit={submitHandler}>
+          {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">
-              Email
+            <label className="block text-[0.62rem] tracking-[0.2em] uppercase text-[#8a7f6e] mb-2">
+              Email Address
             </label>
             <input
               type="email"
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500"
-              placeholder="Enter your email"
+              placeholder="hello@example.com"
+              className="w-full px-0 py-2 bg-transparent border-b border-[#c4b99a] text-[#1c1c1c] text-base placeholder-[#b5aa96] focus:outline-none focus:border-[#1c1c1c] transition-colors duration-300"
             />
           </div>
+
+          {/* Password */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-400 mb-1">
+            <label className="block text-[0.62rem] tracking-[0.2em] uppercase text-[#8a7f6e] mb-2">
               Password
             </label>
             <input
               type={showPassword ? "text" : "password"}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500"
-              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="w-full px-0 py-2 bg-transparent border-b border-[#c4b99a] text-[#1c1c1c] text-base placeholder-[#b5aa96] focus:outline-none focus:border-[#1c1c1c] transition-colors duration-300 pr-8"
             />
             <button
-              className="absolute right-3 top-1/2"
+              type="button"
               onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-0 bottom-2.5 text-[#8a7f6e] hover:text-[#1c1c1c] transition-colors cursor-pointer"
             >
               {showPassword ? (
-                <i className="ri-eye-off-fill"></i>
+                <i className="ri-eye-off-line text-base" />
               ) : (
-                <i className="ri-eye-fill"></i>
+                <i className="ri-eye-line text-base" />
               )}
             </button>
           </div>
+
+          {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-yellow-500 text-black py-2 rounded-lg font-semibold hover:bg-yellow-600 transition-colors"
+            className="w-full py-3 mt-2 bg-[#1c1c1c] text-[#f0ede8] text-[0.7rem] tracking-[0.3em] uppercase hover:bg-[#3a3a3a] transition-colors duration-300 cursor-pointer"
           >
             Sign In
           </button>
-          <p className="text-center text-sm text-gray-400">
+
+          {/* Register link */}
+          <p className="text-center text-sm text-[#8a7f6e]">
             Don't have an account?{" "}
             <Link
               to="/auth/user/register"
-              className="text-yellow-500 hover:underline cursor-pointer"
+              className="text-[#1c1c1c] underline underline-offset-4 hover:text-[#8a7f6e] transition-colors"
             >
               Sign Up
             </Link>
           </p>
 
-          <ContinueWithGoogle/>
+          {/* Divider */}
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px bg-[#c4b99a]" />
+            <span className="text-[0.6rem] tracking-[0.2em] uppercase text-[#b5aa96]">
+              or
+            </span>
+            <div className="flex-1 h-px bg-[#c4b99a]" />
+          </div>
+
+          {/* Google */}
+          <ContinueWithGoogle />
         </form>
       </div>
     </div>

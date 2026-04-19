@@ -2,21 +2,14 @@ import React from 'react'
 
 const ContinueWithGoogle = () => {
   return (
-    <div className="w-full flex flex-col gap-4 my-6">
-      <div className="flex items-center gap-4 w-full">
-        <div className="flex-1 h-px bg-linear-to-r from-transparent to-zinc-700"></div>
-        <span className="text-xs font-semibold text-zinc-500 uppercase tracking-[0.2em]">
-          Or Continue With
-        </span>
-        <div className="flex-1 h-px bg-linear-to-l from-transparent to-zinc-700"></div>
-      </div>
+    <div className="w-full flex flex-col gap-4 my-2">
 
       <button
         type="button"
         onClick={() => (window.location.href = "/api/auth/google")}
-        className="group relative w-full flex items-center justify-center gap-3 px-4 py-3 border border-zinc-700/80 hover:border-zinc-500 rounded-xl overflow-hidden transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.02)] hover:shadow-[0_0_25px_rgba(255,255,255,0.05)] bg-zinc-900/50 hover:bg-zinc-800/80 active:scale-[0.98]"
+        className="group relative w-full flex items-center justify-center gap-3 px-4 py-3 border border-[#c4b99a] hover:border-[#1c1c1c] bg-transparent hover:bg-[#e8e4de] active:scale-[0.98] transition-all duration-300 cursor-pointer"
+        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
       >
-        <div className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/4 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]"></div>
         <svg
           className="w-5 h-5 relative z-10 transition-transform duration-300 group-hover:scale-110"
           viewBox="0 0 24 24"
@@ -39,10 +32,15 @@ const ContinueWithGoogle = () => {
             fill="#EA4335"
           />
         </svg>
-        <span className="relative z-10 text-sm font-semibold text-zinc-300 tracking-wide group-hover:text-white transition-colors duration-300">
+
+        <span
+          className="relative z-10 text-[0.7rem] tracking-[0.25em] uppercase text-[#1c1c1c] group-hover:text-[#1c1c1c] transition-colors duration-300"
+          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+        >
           Continue with Google
         </span>
       </button>
+
     </div>
   );
 }

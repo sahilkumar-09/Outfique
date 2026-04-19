@@ -4,10 +4,8 @@ import { useAuth } from "../hooks/useAuth";
 import ContinueWithGoogle from "./ContinueWithGoogle";
 
 const Right = () => {
-
-  const navigate = useNavigate()
-
-  const {handleRegister} = useAuth()
+  const navigate = useNavigate();
+  const { handleRegister } = useAuth();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -24,15 +22,13 @@ const Right = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
   };
 
-
-  const submitHandler = async(e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
@@ -46,166 +42,225 @@ const Right = () => {
       password: formData.password,
       fullName: formData.fullName,
       isSeller: formData.isSeller,
-    })
-    navigate("/")
-      setError("");
-      setFormData({
-        fullName: "",
-        email: "",
-        contact: "",
-        password: "",
-        confirmPassword: "",
-        isSeller: false,
-      })
+    });
+    navigate("/");
+    setError("");
+    setFormData({
+      fullName: "",
+      email: "",
+      contact: "",
+      password: "",
+      confirmPassword: "",
+      isSeller: false,
+    });
   };
 
   return (
-    <div className="lg:w-1/2 w-full flex items-center justify-center px-6 py-10 lg:px-16">
+    <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 lg:px-16 bg-[#f0ede8]">
       <div className="w-full max-w-md">
-        <p className="text-yellow-500 tracking-widest uppercase text-xs mb-2">
-          Registration
+        {/* Eyebrow */}
+        <p
+          className="text-[0.65rem] tracking-[0.28em] uppercase text-[#8a7f6e] mb-2"
+          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+        >
+          Welcome to Snitch
         </p>
-        <h1 className="text-3xl font-semibold tracking-wider mb-6 ">
-          Create your account
+
+        {/* Heading */}
+        <h1
+          className="text-4xl font-semibold tracking-wide text-[#1c1c1c] mb-1"
+          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+        >
+          Elevate Your Style
         </h1>
 
-        <form className="space-y-6" onSubmit={submitHandler}>
-          <div className="md:grid-cols-2 gap-5 flex flex-col ">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName || ""}
-                onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500"
-                placeholder="Enter your full name"
-              />
-            </div>
+        {/* Divider */}
+        <div className="w-10 h-px bg-[#c4b99a] mt-3 mb-8" />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email || ""}
-                onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500"
-                placeholder="Enter your email"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">
-                Phone
-              </label>
-              <input
-                type="text"
-                name="contact"
-                value={formData.contact || ""}
-                onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500"
-                placeholder="Enter your phone"
-              />
-            </div>
-
-            <div className="relative">
-              <label className="block text-sm font-medium text-gray-400 mb-1">
-                Password
-              </label>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password || ""}
-                onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500"
-                placeholder="Enter your password"
-              />
-              <button
-                type="button"
-                className="cursor-pointer absolute right-3 top-1/2"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? (
-                  <i className="ri-eye-off-fill"></i>
-                ) : (
-                  <i className="ri-eye-fill"></i>
-                )}
-              </button>
-            </div>
-
-            <div>
-              <div className="relative mb-4">
-                <label className="block text-sm font-medium text-gray-400 mb-1">
-                  Confirm Password
-                </label>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword || ""}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500"
-                  placeholder="Enter your confirm password"
-                />
-                <button
-                  type="button"
-                  className="cursor-pointer absolute right-3 top-1/2"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <i className="ri-eye-off-fill"></i>
-                  ) : (
-                    <i className="ri-eye-fill"></i>
-                  )}
-                </button>
-              </div>
-
-              <div className="flex">
-                <input
-                  id="isSeller"
-                  type="checkbox"
-                  name="isSeller"
-                  checked={formData.isSeller || false}
-                  onChange={handleChange}
-                  className="w-5 h-5 text-yellow-500 cursor-pointer font-medium accent-yellow-500 "
-                />
-                <label
-                  htmlFor="isSeller"
-                  className="ml-2 text-sm cursor-pointer font-medium text-zinc-500"
-                >
-                  Register as a seller
-                </label>
-              </div>
-            </div>
-
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-
-            <button
-              type="submit"
-              className="w-full cursor-pointer px-4 uppercase tracking-wider py-2 bg-yellow-500 text-black font-medium rounded-lg hover:bg-yellow-600 transition-colors"
+        <form className="space-y-5" onSubmit={submitHandler}>
+          {/* Full Name */}
+          <div>
+            <label
+              className="block text-[0.62rem] tracking-[0.2em] uppercase text-[#8a7f6e] mb-2"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
             >
-              Create Account
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="e.g. John Doe"
+              className="w-full px-0 py-2 bg-transparent border-b border-[#c4b99a] text-[#1c1c1c] text-base placeholder-[#b5aa96] focus:outline-none focus:border-[#1c1c1c] transition-colors duration-300"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label
+              className="block text-[0.62rem] tracking-[0.2em] uppercase text-[#8a7f6e] mb-2"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            >
+              Email Address
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="hello@example.com"
+              className="w-full px-0 py-2 bg-transparent border-b border-[#c4b99a] text-[#1c1c1c] text-base placeholder-[#b5aa96] focus:outline-none focus:border-[#1c1c1c] transition-colors duration-300"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            />
+          </div>
+
+          {/* Contact */}
+          <div>
+            <label
+              className="block text-[0.62rem] tracking-[0.2em] uppercase text-[#8a7f6e] mb-2"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            >
+              Contact Number
+            </label>
+            <input
+              type="text"
+              name="contact"
+              value={formData.contact}
+              onChange={handleChange}
+              placeholder="+91 98765 43210"
+              className="w-full px-0 py-2 bg-transparent border-b border-[#c4b99a] text-[#1c1c1c] text-base placeholder-[#b5aa96] focus:outline-none focus:border-[#1c1c1c] transition-colors duration-300"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            />
+          </div>
+
+          {/* Password */}
+          <div className="relative">
+            <label
+              className="block text-[0.62rem] tracking-[0.2em] uppercase text-[#8a7f6e] mb-2"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            >
+              Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              className="w-full px-0 py-2 bg-transparent border-b border-[#c4b99a] text-[#1c1c1c] text-base placeholder-[#b5aa96] focus:outline-none focus:border-[#1c1c1c] transition-colors duration-300 pr-8"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-0 bottom-2.5 text-[#8a7f6e] hover:text-[#1c1c1c] transition-colors cursor-pointer"
+            >
+              {showPassword ? (
+                <i className="ri-eye-off-line text-base" />
+              ) : (
+                <i className="ri-eye-line text-base" />
+              )}
             </button>
           </div>
 
-          <p className="text-center text-sm text-gray-400">
+          {/* Confirm Password */}
+          <div className="relative">
+            <label
+              className="block text-[0.62rem] tracking-[0.2em] uppercase text-[#8a7f6e] mb-2"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            >
+              Confirm Password
+            </label>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm your password"
+              className="w-full px-0 py-2 bg-transparent border-b border-[#c4b99a] text-[#1c1c1c] text-base placeholder-[#b5aa96] focus:outline-none focus:border-[#1c1c1c] transition-colors duration-300 pr-8"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-0 bottom-2.5 text-[#8a7f6e] hover:text-[#1c1c1c] transition-colors cursor-pointer"
+            >
+              {showConfirmPassword ? (
+                <i className="ri-eye-off-line text-base" />
+              ) : (
+                <i className="ri-eye-line text-base" />
+              )}
+            </button>
+          </div>
+
+          {/* Register as Seller */}
+          <div className="flex items-center gap-3 pt-1">
+            <input
+              id="isSeller"
+              type="checkbox"
+              name="isSeller"
+              checked={formData.isSeller}
+              onChange={handleChange}
+              className="w-4 h-4 cursor-pointer accent-[#1c1c1c] border border-[#c4b99a] rounded-none"
+            />
+            <label
+              htmlFor="isSeller"
+              className="text-[0.7rem] tracking-[0.15em] uppercase text-[#8a7f6e] cursor-pointer"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            >
+              Register as a Seller
+            </label>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <p
+              className="text-red-500 text-sm"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            >
+              {error}
+            </p>
+          )}
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full py-3 mt-2 bg-[#1c1c1c] text-[#f0ede8] text-[0.7rem] tracking-[0.3em] uppercase hover:bg-[#3a3a3a] transition-colors duration-300 cursor-pointer"
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+          >
+            Sign Up
+          </button>
+
+          {/* Login link */}
+          <p
+            className="text-center text-sm text-[#8a7f6e]"
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+          >
             Already have an account?{" "}
             <Link
               to="/auth/user/login"
-              className="text-yellow-500 hover:underline cursor-pointer"
+              className="text-[#1c1c1c] underline underline-offset-4 hover:text-[#8a7f6e] transition-colors"
             >
               Login
             </Link>
           </p>
 
-          {/* Google continue option can be added here */}
+          {/* Divider */}
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px bg-[#c4b99a]" />
+            <span
+              className="text-[0.6rem] tracking-[0.2em] uppercase text-[#b5aa96]"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+            >
+              or
+            </span>
+            <div className="flex-1 h-px bg-[#c4b99a]" />
+          </div>
 
-          <ContinueWithGoogle/>
-
+          {/* Google */}
+          <ContinueWithGoogle />
         </form>
       </div>
     </div>

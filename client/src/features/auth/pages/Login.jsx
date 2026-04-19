@@ -4,11 +4,9 @@ import Right from "../components/Right.Login";
 
 const Login = () => {
   return (
-    <main className="min-h-screen bg-[#131313] text-white flex flex-col p-2">
-      <div className="flex flex-1 flex-col lg:flex-row">
-        <Left />
-        <Right />
-      </div>
+    <main className="min-h-screen bg-[#f0ede8] flex flex-row">
+      <Left />
+      <Right />
     </main>
   );
 };
