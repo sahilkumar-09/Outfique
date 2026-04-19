@@ -1,11 +1,5 @@
 ::-webkit-scrollbar {
-  width: 10px;
-}
-
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #d7d7d7, #505050);
-  border-radius: 10px;
+  display: none;
 }
 
 html {
@@ -15,5 +9,6 @@ html {
 body {
   -webkit-overflow-scrolling: touch;
 }
+
 
 @import "tailwindcss";

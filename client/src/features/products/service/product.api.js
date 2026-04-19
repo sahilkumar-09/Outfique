@@ -25,5 +25,13 @@ export const getSellerAllProducts = async () => {
 export const getAllProducts = async () => {
         const response = await productApiInstance.get("/")
         return response.data
+}
 
+export const getProductById = async (productId) => {
+    try {
+        const response = await productApiInstance.get(`/details/${productId}`)
+        return response.data
+    } catch (error) {
+        throw error.message
+    }
 }

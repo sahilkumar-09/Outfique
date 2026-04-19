@@ -1,6 +1,9 @@
 import express from "express"
 import {sellerMiddleware} from "../middlewares/user.middleware.js"
-import { createProductController, getAllProductsController, getAllSellerProductsController } from "../controllers/product.controller.js"
+import {
+    createProductController, getAllProductsController, getAllSellerProductsController,
+    getProductByIdController
+ } from "../controllers/product.controller.js"
 import multer from "multer"
 import { createProductValidator } from "../validators/product.validator.js"
 
@@ -29,5 +32,11 @@ router.get("/seller", sellerMiddleware, getAllSellerProductsController)
  * @Get all products
  */
 router.get("/", getAllProductsController)
+
+/**
+ * @Get product by id
+ * @GET
+ */
+router.get("/details/:productId", getProductByIdController)
 
 export default router
