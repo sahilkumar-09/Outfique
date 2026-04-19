@@ -137,6 +137,33 @@ const googleSuccessController =async (req, res) => {
   res.redirect("http://localhost:5173/")
 };
 
+/**
+ * @Me Controller
+ */
+
+const getMeController = async (req, res) => {
+  try {
+    const user = req.user
+    return res.status(200).json({
+      success: true,
+      message: "User fetched successfully",
+      user: {
+        id: user._id,
+        email: user.email,
+        fullname: user.fullName,
+        contact: user.contact,
+        role: user.role
+      },
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    })
+  }
+}
+
 export {
-  userRegisterController, userLoginController, googleSuccessController
+  userRegisterController, userLoginController, googleSuccessController, getMeController
 };

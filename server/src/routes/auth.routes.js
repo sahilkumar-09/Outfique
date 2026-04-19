@@ -3,10 +3,12 @@ import { validateRegister, validatorLoginUser } from "../validators/auth.validat
 import {
   userRegisterController,
   userLoginController,
-  googleSuccessController
+  googleSuccessController,
+  getMeController
 } from "../controllers/auth.controller.js";
 import passport from "passport";
 import configure from "../config/config.js"
+import { authMiddleware } from "../middlewares/user.middleware.js";
 
 const router = Router()
 
@@ -23,6 +25,10 @@ router.post("/register", validateRegister, userRegisterController);
 
 router.post("/login", validatorLoginUser, userLoginController);
 
+/**
+ * @Google_Auth_Routes
+ * @GET
+ */
 router.get("/google", passport.authenticate("google", {
   scope: ["profile", "email"]
 }))
@@ -31,5 +37,12 @@ router.get("/google/callback",
   passport.authenticate("google", { session: false, failureRedirect: configure.NODE_ENV === "development" ? "http://localhost:5173/auth/user/login" : "/login" }),
   googleSuccessController
 )
+
+/**
+ * @Me_Routes  
+ * @GET
+ */
+
+router.get("/me", authMiddleware, getMeController)
 
 export default router

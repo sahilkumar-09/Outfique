@@ -6,7 +6,6 @@ const authApiInstance = axios.create({
 });
 
 export const register = async ({ email, contact, password, fullName, isSeller }) => {
-    try {
         const response = await authApiInstance.post("/register", {
             email,
             contact,
@@ -15,16 +14,15 @@ export const register = async ({ email, contact, password, fullName, isSeller })
             isSeller
         })
         return response.data
-    } catch (error) {
-        throw error
-    }
+
 }
 
 export const login = async ({ email, password }) => {
-    try {
         const response = await authApiInstance.post("/login", { email, password })
         return response.data
-    } catch (error) {
-        throw error
-    }
 }   
+
+export const getMe = async() => {
+    const response = await authApiInstance.get("/me")
+    return response.data
+}
