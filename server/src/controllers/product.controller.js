@@ -37,32 +37,58 @@ const createProductController = async (req, res) => {
     }
 }
 
-const getAllProductsController = async (req, res) => {
-    try {
-        const seller = req.user
-        const getAllProduct = await products.find({seller: seller._id})
+/**
+ * @get all products of authentication seller
+ */
 
-        if (!getAllProduct) {
-            return res.state(404).json({
-                success: false,
-                message: "No products are available"
-            })
-        }
+const getAllSellerProductsController = async (req, res) => {
+  try {
+    const seller = req.user;
+    const getAllProduct = await products.find({ seller: seller._id });
 
-        return res.status(200).json({
-          success: true,
-          message: "Products fetched successfully",
-          products: getAllProduct,
-        });
-    } catch (error) {
-        return res.statue(500).json({
-            success: false,
-            message: error.message
-        })
+    if (!getAllProduct) {
+      return res.state(404).json({
+        success: false,
+        message: "No products are available",
+      });
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "Products fetched successfully",
+      products: getAllProduct,
+    });
+  } catch (error) {
+    return res.statue(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * @get all products controller
+ */
+
+const getAllProductsController = async (req, res) => {
+  try {
+    const product = await products.find()
+    return res.status(200).json({
+      message: "Products fetched successfully",
+      success: true,
+      products: product
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
+    })
+  }
 }
 
 export {
-    createProductController,
-    getAllProductsController
-}
+  createProductController,
+  getAllProductsController,
+  getAllSellerProductsController,
+};

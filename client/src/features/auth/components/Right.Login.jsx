@@ -13,8 +13,12 @@ const Right = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    await handleLogin({ email, password });
-    navigate("/");
+    const user = await handleLogin({ email, password });
+    if (user.role == "buyer") {
+      navigate("/")
+    }else if(user.role == "seller") {
+      navigate("/seller/dashboard")
+    }
     setEmail("");
     setPassword("");
   };

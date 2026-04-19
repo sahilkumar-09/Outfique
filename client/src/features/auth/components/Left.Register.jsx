@@ -1,4 +1,4 @@
-// ─── Left.Register.jsx ───────────────────────────────────────────────────────
+
 import React from "react";
 
 export const Left = () => {

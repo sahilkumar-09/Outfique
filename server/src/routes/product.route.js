@@ -1,6 +1,6 @@
 import express from "express"
 import {sellerMiddleware} from "../middlewares/user.middleware.js"
-import { createProductController, getAllProductsController } from "../controllers/product.controller.js"
+import { createProductController, getAllProductsController, getAllSellerProductsController } from "../controllers/product.controller.js"
 import multer from "multer"
 import { createProductValidator } from "../validators/product.validator.js"
 
@@ -20,9 +20,14 @@ const router = express.Router()
 router.post("/", sellerMiddleware, upload.array("productImages", 7),createProductValidator, createProductController)
 
 /**
- * @Get All product api
+ * @Get All products of authentication seller
  * @GET
  */
-router.get("/seller", sellerMiddleware, getAllProductsController)
+router.get("/seller", sellerMiddleware, getAllSellerProductsController)
+
+/**
+ * @Get all products
+ */
+router.get("/", getAllProductsController)
 
 export default router

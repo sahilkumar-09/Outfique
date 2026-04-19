@@ -1,6 +1,7 @@
 import users from "../models/user.models.js";
 import jwt from "jsonwebtoken";
 import configure from "../config/config.js";
+import products from "../models/product.models.js";
 
 const sendTokenResponse = async(user, res) => {
   const token = jwt.sign({ id: user._id }, configure.JWT_SECRET, {
@@ -10,6 +11,7 @@ const sendTokenResponse = async(user, res) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: false,
+    sameSite: "lax",
   });
 
   return token;
@@ -146,7 +148,6 @@ const getMeController = async (req, res) => {
     const user = req.user
     return res.status(200).json({
       success: true,
-      message: "User fetched successfully",
       user: {
         id: user._id,
         email: user.email,
@@ -163,6 +164,8 @@ const getMeController = async (req, res) => {
     })
   }
 }
+
+
 
 export {
   userRegisterController, userLoginController, googleSuccessController, getMeController

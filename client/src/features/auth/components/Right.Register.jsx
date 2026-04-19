@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import ContinueWithGoogle from "./ContinueWithGoogle";
 
+
 const Right = () => {
   const navigate = useNavigate();
   const { handleRegister } = useAuth();
@@ -16,6 +17,8 @@ const Right = () => {
     isSeller: false,
   });
 
+  
+
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -28,6 +31,7 @@ const Right = () => {
     });
   };
 
+
   const submitHandler = async (e) => {
     e.preventDefault();
 
@@ -36,14 +40,20 @@ const Right = () => {
       return;
     }
 
-    await handleRegister({
+    const user = await handleRegister({
       email: formData.email,
       contact: formData.contact,
       password: formData.password,
       fullName: formData.fullName,
       isSeller: formData.isSeller,
     });
-    navigate("/");
+
+    if (user.role == "buyer") {
+      navigate("/")
+    } else if(user.role == "seller") {
+      navigate("/seller/dashboard")
+    }
+    
     setError("");
     setFormData({
       fullName: "",
@@ -268,3 +278,5 @@ const Right = () => {
 };
 
 export default Right;
+
+8709088970;

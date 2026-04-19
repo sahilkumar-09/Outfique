@@ -21,3 +21,9 @@ export const getSellerAllProducts = async () => {
         throw error.message
     }
 }
+
+export const getAllProducts = async () => {
+        const response = await productApiInstance.get("/")
+        return response.data
+
+}
