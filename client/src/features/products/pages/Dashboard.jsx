@@ -70,6 +70,7 @@ const ProductCard = ({ product }) => {
   const [hovered, setHovered] = React.useState(false);
   const [imgIndex, setImgIndex] = React.useState(0);
 
+  const navigate = useNavigate();
   // Cycle to second image on hover if available
   React.useEffect(() => {
     if (hovered && product.productImages?.length > 1) {
@@ -106,7 +107,9 @@ const ProductCard = ({ product }) => {
       onMouseLeave={() => setHovered(false)}
     >
       {/* Image */}
-      <div className="relative overflow-hidden aspect-[3/4] bg-[#e8e4de]">
+      <div className="relative overflow-hidden aspect-[3/4] bg-[#e8e4de]" onClick={() => {
+        navigate(`/seller/product/${product._id}`)
+      }}>
         {product.productImages?.length > 0 ? (
           <img
             src={product.productImages[imgIndex]?.url}

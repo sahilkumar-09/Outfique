@@ -91,7 +91,7 @@ const getAllProductsController = async (req, res) => {
  * @get product by id controller
  */
 
-export const getProductByIdController = async (req, res) => {
+const getProductByIdController = async (req, res) => {
   try {
     const { productId } = req.params
     
@@ -123,5 +123,5 @@ export {
   createProductController,
   getAllProductsController,
   getAllSellerProductsController,
-  getProductByIdController
+  getProductByIdController,
 };
