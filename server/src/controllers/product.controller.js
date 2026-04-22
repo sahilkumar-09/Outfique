@@ -117,6 +117,71 @@ const getProductByIdController = async (req, res) => {
       error: error.message
     })
   }
+  
+}
+
+/**
+ * @add product variant controller
+ */
+
+const addProductVariantController = async (req, res) => {
+  try {
+   const productId = req.params.productId 
+    const product = await products.findOne({
+      _id: productId,
+      seller: req.user._id
+    })
+    
+    const files = req.files
+    const images = []
+    console.log(files)
+    
+    if (files || files.length !== 0) {
+      (await Promise.all(files.map(async (file) => {
+        const image = await uploadImage({
+          buffer: file.buffer,
+          fileName: file.originalname
+        })
+
+        return image
+      }))).map(image => images.push(image))
+    }
+
+    const stock = req.body.stock;
+    const attributes = JSON.parse(req.body.attributes || "{}")
+    const price = req.body.amount
+
+    product.variants.push({
+      productImages: images,
+      stock,
+      attributes,
+      price: {
+        amount: price,
+        currency: req.body.currency ||  "INR"
+      }
+    })
+
+    await product.save()
+    // console.log(product, images, stock, attributes, price)
+
+    return res.status(201).json({
+      success: true,
+      message: "Variant created successfully",
+      product: {
+        stock,
+        attributes,
+        price,
+        productImages: images
+      } 
+    })
+    
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
+    })
+  }
 }
 
 export {
@@ -124,4 +189,5 @@ export {
   getAllProductsController,
   getAllSellerProductsController,
   getProductByIdController,
+  addProductVariantController
 };

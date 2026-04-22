@@ -39,7 +39,7 @@ const sellerMiddleware = async (req, res, next) => {
       });
     }
     const decodedToken = jwt.verify(token, configure.JWT_SECRET);
-    console.log(decodedToken)
+    
     const user = await users.findById(decodedToken.id);
     if (!user) {
       return res.status(401).json({
@@ -53,6 +53,7 @@ const sellerMiddleware = async (req, res, next) => {
         message: "Forbidden, User must be seller",
       });
     }
+
     req.user = user;
     next();
   } catch (error) {

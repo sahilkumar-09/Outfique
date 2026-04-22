@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useProduct } from "../hooks/useProduct";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -67,12 +67,12 @@ const Dashboard = () => {
 };
 
 const ProductCard = ({ product }) => {
-  const [hovered, setHovered] = React.useState(false);
-  const [imgIndex, setImgIndex] = React.useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [imgIndex, setImgIndex] = useState(0);
 
   const navigate = useNavigate();
   // Cycle to second image on hover if available
-  React.useEffect(() => {
+  useEffect(() => {
     if (hovered && product.productImages?.length > 1) {
       setImgIndex(1);
     } else {
@@ -102,14 +102,17 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-      className="bg-[#f0ede8] flex flex-col group cursor-pointer border border-[#ddd8d0] hover:border-[#1c1c1c] hover:shadow-[0_8px_32px_rgba(28,28,28,0.10)] transition-all duration-500"
+      className="bg-[#f0ede8] flex flex-col w-[350px] h-[500px] group cursor-pointer border border-[#ddd8d0] hover:border-[#1c1c1c] hover:shadow-[0_8px_32px_rgba(28,28,28,0.10)] transition-all duration-500"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Image */}
-      <div className="relative overflow-hidden aspect-[3/4] bg-[#e8e4de]" onClick={() => {
-        navigate(`/seller/product/${product._id}`)
-      }}>
+      <div
+        className="relative overflow-hidden aspect-[3/4] bg-[#e8e4de]"
+        onClick={() => {  
+          navigate(`/seller/product/${product._id}`);
+        }}
+      >
         {product.productImages?.length > 0 ? (
           <img
             src={product.productImages[imgIndex]?.url}
@@ -133,7 +136,7 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Info */}
-      <div className="p-6 flex flex-col gap-4 border-t border-[#c4b99a]">
+      <div className="p-5 flex flex-col gap-3 flex-1 border-t border-[#c4b99a]">
         <div className="flex items-start justify-between gap-4">
           <h2 className="text-lg font-semibold tracking-wide text-[#1c1c1c] leading-tight">
             {product.title}
