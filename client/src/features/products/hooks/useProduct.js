@@ -1,10 +1,10 @@
 import { useDispatch } from "react-redux";
 import {
-  addProductVariant,
   createProducts,
   getAllProducts,
   getProductById,
   getSellerAllProducts,
+  addProductVariant
 } from "../service/product.api";
 import { setAllProducts, setSellerProducts } from "../state/product.slice";
 
@@ -49,13 +49,20 @@ export const useProduct = () => {
     }
   };
 
-
+  const handleAddProductVariants = async(productId, newProductVariant) => {
+    try{
+      const data = await addProductVariant(productId, newProductVariant)
+      return data.product
+    }catch(error){
+      throw error.message
+    }
+  }
 
   return {
     handleCreateProducts,
     handleGetSellerProduct,
     handleGetAllProducts,
     handleGetProductById,
-    handleAddProductVariant,
+    handleAddProductVariants,
   };
 };

@@ -157,7 +157,7 @@ const addProductVariantController = async (req, res) => {
       attributes,
       price: {
         amount: price,
-        currency: req.body.currency ||  "INR"
+        currency: req.body.currency ||  product.price.currency
       }
     })
 

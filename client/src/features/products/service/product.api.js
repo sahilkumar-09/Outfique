@@ -36,11 +36,18 @@ export const getProductById = async (productId) => {
   }
 };
 
-export const addProductVariant = async (productId, variants) => {
-  try {
-    const formData = new FormData()
-    
-  } catch (error) {
-    throw error.message.
-  }
+export const addProductVariant = async (productId, newProductVariant) => {
+  const formData = new FormData()
+
+  newProductVariant.productImages.forEach((img) => {
+    formData.append("productImages", img.file)
+  })
+
+  formData.append("stock", newProductVariant.stock)
+  formData.append('amount', newProductVariant.price.amount)
+  formData.append("attributes", JSON.stringify(newProductVariant.attributes))
+
+  const response = await productApiInstance.post(`/${productId}/variants`, formData)
+
+  return response.data
 }
