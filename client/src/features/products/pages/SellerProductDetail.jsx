@@ -20,6 +20,17 @@ const SellerProductDetail = () => {
     productImages: [],
   });
 
+  const ATTRIBUTE_KEYS = [
+    "color",
+    "size",
+    "material",
+    "style",
+    "weight",
+    "length",
+    "width",
+    "height",
+  ];
+
   useEffect(() => {
     const fetchProduct = async () => {
       const data = await handleGetProductById(productId);
@@ -199,10 +210,11 @@ const SellerProductDetail = () => {
             {/* Attributes */}
             <div className="space-y-3 mb-4">
               {newVariant.attributes.map((attr, idx) => (
-                <div className="flex w-full items-center justify-between">
+                <div >
                   <div key={idx} className="grid md:grid-cols-2 gap-3 w-[90%]">
                     <input
                       type="text"
+                      readOnly
                       placeholder="Attribute name"
                       value={attr.key}
                       onChange={(e) =>
@@ -213,6 +225,7 @@ const SellerProductDetail = () => {
                     <input
                       type="text"
                       placeholder="Value"
+                      readOnly
                       value={attr.value}
                       onChange={(e) =>
                         handleAttributesChange(idx, "value", e.target.value)
@@ -220,17 +233,6 @@ const SellerProductDetail = () => {
                       className="p-3 border border-[#d6d0c7] bg-white outline-none"
                     />
                   </div>
-                  <button onClick={() => {
-                    removeAttributes(idx)
-                  }} className="text-black w-5 h-5 rounded-full text-xs flex items-center justify-center cursor-pointer">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path>
-                    </svg>
-                  </button>
                 </div>
               ))}
             </div>
@@ -252,18 +254,45 @@ const SellerProductDetail = () => {
 
             {/* Preview Images */}
             <div className="flex gap-3 flex-wrap mb-6">
-              {newVariant.productImages.map((img, i) => (
-                <div key={i} className="relative">
-                  <img
-                    src={img.preview}
-                    alt=""
-                    className="w-24 h-24 object-cover border border-[#d6d0c7]"
-                  />
+              {newVariant.attributes.map((attr, idx) => (
+                <div
+                  key={idx}
+                  className="flex w-full items-center justify-between"
+                >
+                  <div className="grid md:grid-cols-2 gap-3 w-[90%]">
+                    {/* Fixed attribute key dropdown */}
+                    <select
+                      value={attr.key}
+                      onChange={(e) =>
+                        handleAttributesChange(idx, "key", e.target.value)
+                      }
+                      className="p-3 border border-[#d6d0c7] bg-white outline-none"
+                    >
+                      <option value="">Select Attribute</option>
+                      {ATTRIBUTE_KEYS.map((key) => (
+                        <option key={key} value={key}>
+                          {key}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Attribute value */}
+                    <input
+                      type="text"
+                      placeholder="Value"
+                      value={attr.value}
+                      onChange={(e) =>
+                        handleAttributesChange(idx, "value", e.target.value)
+                      }
+                      className="p-3 border border-[#d6d0c7] bg-white outline-none"
+                    />
+                  </div>
 
                   <button
-                    type="button"
-                    onClick={() => removeImages(i)}
-                    className="absolute top-1 right-1  text-black w-5 h-5 rounded-full text-xs flex items-center justify-center cursor-pointer"
+                    onClick={() => {
+                      removeAttributes(idx);
+                    }}
+                    className="text-black w-5 h-5 rounded-full text-xs flex items-center justify-center cursor-pointer"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

@@ -155,7 +155,7 @@ const Home = () => {
               color: "#C9A96E",
             }}
           >
-            Snitch. © {new Date().getFullYear()}
+            Outfique. © {new Date().getFullYear()}
           </span>
         </footer>
       </div>
