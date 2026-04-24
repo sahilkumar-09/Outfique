@@ -60,6 +60,22 @@ const SellerProductDetail = () => {
     }));
   };
 
+  const removeImages = (indexToRemove) => {
+    setNewVariant((prev) => ({
+      ...prev,
+      productImages: prev.productImages.filter(
+        (_, index) => index !== indexToRemove,
+      ),
+    }));
+  };
+
+  const removeAttributes = (rmvAtr) => {
+    setNewVariant((prev) => ({
+      ...prev,
+      attributes: prev.attributes.filter((_, idx) => idx !== rmvAtr),
+    }));
+  }
+
   const submitVariantHandler = async () => {
     const attrs = {};
 
@@ -105,7 +121,7 @@ const SellerProductDetail = () => {
         </div>
       ) : (
         <div className="px-4 sm:px-8 md:px-16 py-10 max-w-7xl mx-auto">
-          {/* Back */}
+          {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
             className="mb-8 text-xs tracking-[0.15em] uppercase text-[#8a7f6e] hover:text-[#1c1c1c]"
@@ -155,6 +171,7 @@ const SellerProductDetail = () => {
               Add Product Variant
             </h2>
 
+            {/* Stock */}
             <input
               type="number"
               placeholder="Enter stock"
@@ -165,6 +182,7 @@ const SellerProductDetail = () => {
               className="w-full mb-4 p-3 border border-[#d6d0c7] bg-white outline-none"
             />
 
+            {/* Price */}
             <input
               type="number"
               placeholder="Enter variant price"
@@ -178,38 +196,53 @@ const SellerProductDetail = () => {
               className="w-full mb-6 p-3 border border-[#d6d0c7] bg-white outline-none"
             />
 
+            {/* Attributes */}
             <div className="space-y-3 mb-4">
               {newVariant.attributes.map((attr, idx) => (
-                <div key={idx} className="grid md:grid-cols-2 gap-3">
-                  <input
-                    type="text"
-                    placeholder="Attribute name"
-                    value={attr.key}
-                    onChange={(e) =>
-                      handleAttributesChange(idx, "key", e.target.value)
-                    }
-                    className="p-3 border border-[#d6d0c7] bg-white outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Value"
-                    value={attr.value}
-                    onChange={(e) =>
-                      handleAttributesChange(idx, "value", e.target.value)
-                    }
-                    className="p-3 border border-[#d6d0c7] bg-white outline-none"
-                  />
+                <div className="flex w-full items-center justify-between">
+                  <div key={idx} className="grid md:grid-cols-2 gap-3 w-[90%]">
+                    <input
+                      type="text"
+                      placeholder="Attribute name"
+                      value={attr.key}
+                      onChange={(e) =>
+                        handleAttributesChange(idx, "key", e.target.value)
+                      }
+                      className="p-3 border border-[#d6d0c7] bg-white outline-none"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Value"
+                      value={attr.value}
+                      onChange={(e) =>
+                        handleAttributesChange(idx, "value", e.target.value)
+                      }
+                      className="p-3 border border-[#d6d0c7] bg-white outline-none"
+                    />
+                  </div>
+                  <button onClick={() => {
+                    removeAttributes(idx)
+                  }} className="text-black w-5 h-5 rounded-full text-xs flex items-center justify-center cursor-pointer">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path>
+                    </svg>
+                  </button>
                 </div>
               ))}
             </div>
 
             <button
               onClick={handleAttributes}
-              className="mb-6 px-4 py-2 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.2em] uppercase hover:bg-[#1c1c1c] hover:text-white transition"
+              className="mb-6 px-4 py-2 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.2em] uppercase hover:bg-[#1c1c1c] hover:text-white transition cursor-pointer"
             >
               Add Attribute
             </button>
 
+            {/* Upload Images */}
             <input
               type="file"
               multiple
@@ -217,20 +250,37 @@ const SellerProductDetail = () => {
               className="block mb-4"
             />
 
+            {/* Preview Images */}
             <div className="flex gap-3 flex-wrap mb-6">
               {newVariant.productImages.map((img, i) => (
-                <img
-                  key={i}
-                  src={img.preview}
-                  alt=""
-                  className="w-24 h-24 object-cover border border-[#d6d0c7]"
-                />
+                <div key={i} className="relative">
+                  <img
+                    src={img.preview}
+                    alt=""
+                    className="w-24 h-24 object-cover border border-[#d6d0c7]"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => removeImages(i)}
+                    className="absolute top-1 right-1  text-black w-5 h-5 rounded-full text-xs flex items-center justify-center cursor-pointer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path>
+                    </svg>
+                  </button>
+                </div>
               ))}
             </div>
 
+            {/* Save Button */}
             <button
               onClick={submitVariantHandler}
-              className="w-full py-4 bg-[#1c1c1c] text-[#f0ede8] text-xs tracking-[0.25em] uppercase hover:bg-[#333] transition"
+              className="w-full py-4 bg-[#1c1c1c] text-[#f0ede8] text-xs tracking-[0.25em] uppercase hover:bg-[#333] transition cursor-pointer"
             >
               Save Variant
             </button>
