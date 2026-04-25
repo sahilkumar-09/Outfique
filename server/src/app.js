@@ -7,6 +7,7 @@ import passport from 'passport'
 import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
 import configure from "./config/config.js";
 import productRoutes from "./routes/product.route.js"
+import cartRoutes from "./routes/cart.routes.js"
 
 const app = express();
 
@@ -27,7 +28,7 @@ passport.use(
     clientSecret: configure.GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:3000/api/auth/google/callback",
 
-  }, (accessToken, refreshToken, profile, done) => {
+  }, (_, __, profile, done) => {
       return done(null, profile)
   }),
 );
@@ -40,5 +41,11 @@ app.use("/api/auth", authRoutes);
  * @ProductRoutes
  */
 app.use("/api/products", productRoutes)
+
+/**
+ * @CartRoutes
+ */
+
+app.use("/api/cart", cartRoutes)
 
 export default app;
