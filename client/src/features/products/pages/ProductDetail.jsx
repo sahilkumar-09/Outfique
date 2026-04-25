@@ -2,13 +2,14 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useProduct } from "../hooks/useProduct";
 import Nav from "../components/Nav";
+import { useCart } from "../../cart/hooks/useCart";
 
 const sym = { INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
 
 const ProductDetail = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
-
+  const { handleAddToCart } = useCart();
   const [activeImage, setActiveImage] = useState(0);
   const [product, setProduct] = useState(null);
   const [selectedAttributes, setSelectedAttributes] = useState({});
@@ -294,7 +295,7 @@ const ProductDetail = () => {
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 onClick={() =>
-                  handleAddItem({
+                  handleAddToCart({
                     productId: product._id,
                     variantId: activeVariant?._id,
                   })
