@@ -101,7 +101,21 @@ const Cart = () => {
                     {/* Actions */}
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex items-center border border-[#d6d0c7] overflow-hidden rounded-full">
-                        <button className="cursor-pointer px-3 py-2  hover:bg-[#ece7df] ">
+                        <button onClick={() => {
+                          handleDecrementItems({  
+                            productId: product._id,
+                            variantId: item.variantId
+                          })
+                          
+                          setCartItem((prev) => (
+                            prev.map(cart => (
+                              cart.productId._id === product._id &&
+                              cart.variantId === item.variantId
+                                ? { ...cart, quantity: cart.quantity - 1 }
+                                : cart
+                            ))
+                          ))
+                        }} disabled={item.quantity <= 1}  className="cursor-pointer px-3 py-2  hover:bg-[#ece7df] ">
                           −
                         </button>
                         <span className="px-4  py-2 text-sm">
