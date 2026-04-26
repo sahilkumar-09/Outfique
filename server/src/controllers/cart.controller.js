@@ -105,7 +105,7 @@ const addToCartController = async (req, res) => {
 
 const getAllCartController = async (req, res) => {
 
-    let cart = await carts.findOne({ user: req.user._id });
+  let cart = await carts.findOne({ user: req.user._id })
     if (!cart) {
       cart = await carts.create({ user: req.user._id });
     }

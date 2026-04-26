@@ -298,8 +298,7 @@ const ProductDetail = () => {
                   handleAddToCart({
                     productId: product._id,
                     variantId: activeVariant?._id,
-                  })
-                }
+                  })            }
                 className="flex-1 py-4 bg-[#1c1c1c] text-white text-xs tracking-[0.25em] uppercase hover:bg-transparent hover:border hover:border-[#1c1c1c] hover:text-[#1c1c1c] transition-all"
               >
                 Add to Cart
