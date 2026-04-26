@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
   const [cartItem, setCartItem] = useState([]);
-  const { handleGetAllAddToCart, handleIncrementItems } = useCart();
+  const { handleGetAllAddToCart, handleIncrementItems, handleDecrementItems, handleDeleteItems } = useCart();
 
   const fetchData = async () => {
     const data = await handleGetAllAddToCart(cartItems);
@@ -19,13 +19,14 @@ const Cart = () => {
     fetchData();
   }, []);
 
+
   const subtotal = useMemo(() => {
     return cartItem.reduce(
       (total, item) => total + item.price.amount * item.quantity,
       0,
     );
   }, [cartItem]);
-  console.log(cartItem);
+
   return (
     <div className="min-h-screen bg-[#f6f2eb] text-[#1c1c1c]">
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-10">
@@ -43,11 +44,10 @@ const Cart = () => {
           <div className="space-y-6">
             {cartItem?.map((item) => {
               const product = item.productId;
-
               const selectedVariant = product.variants.find(
                 (variant) => variant._id === item.variantId,
               );
-
+              console.log()
               const image =
                 selectedVariant?.productImages?.[0]?.url ||
                 product?.productImages?.[0]?.url;
@@ -85,7 +85,7 @@ const Cart = () => {
                       </div>
 
                       <p className="text-lg font-semibold text-[#1c1c1c]">
-                        ₹{item.price.amount.toLocaleString()}
+                        {item.price.amount.toLocaleString()}
                       </p>
                       <small
                         className="text-[#a5a19b]
@@ -101,21 +101,25 @@ const Cart = () => {
                     {/* Actions */}
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex items-center border border-[#d6d0c7] overflow-hidden rounded-full">
-                        <button onClick={() => {
-                          handleDecrementItems({  
-                            productId: product._id,
-                            variantId: item.variantId
-                          })
-                          
-                          setCartItem((prev) => (
-                            prev.map(cart => (
-                              cart.productId._id === product._id &&
-                              cart.variantId === item.variantId
-                                ? { ...cart, quantity: cart.quantity - 1 }
-                                : cart
-                            ))
-                          ))
-                        }} disabled={item.quantity <= 1}  className="cursor-pointer px-3 py-2  hover:bg-[#ece7df] ">
+                        <button
+                          onClick={() => {
+                            handleDecrementItems({
+                              productId: product._id,
+                              variantId: item.variantId,
+                            });
+
+                            setCartItem((prev) =>
+                              prev.map((cart) =>
+                                cart.productId._id === product._id &&
+                                cart.variantId === item.variantId
+                                  ? { ...cart, quantity: cart.quantity - 1 }
+                                  : cart,
+                              ),
+                            );
+                          }}
+                          disabled={item.quantity <= 1}
+                          className="cursor-pointer px-3 py-2 hover:bg-[#ece7df] disabled:opacity-40 disabled:cursor-not-allowed "
+                        >
                           −
                         </button>
                         <span className="px-4  py-2 text-sm">
@@ -124,17 +128,40 @@ const Cart = () => {
                         <button
                           onClick={() => {
                             handleIncrementItems({
-                              productId: item.productId._id,
+                              productId: product._id,
                               variantId: item.variantId,
                             });
+
+                            setCartItem((prev) =>
+                              prev.map((cart) =>
+                                cart.productId._id === product._id &&
+                                cart.variantId === item.variantId
+                                  ? { ...cart, quantity: cart.quantity + 1 }
+                                  : cart,
+                              ),
+                            );
                           }}
-                          className="cursor-pointer px-3 py-2 hover:bg-[#ece7df] "
+                          disabled={selectedVariant.stock <= item.quantity}
+                          className="cursor-pointer px-3 py-2 hover:bg-[#ece7df] disabled:opacity-40 disabled:cursor-not-allowed "
                         >
                           +
                         </button>
                       </div>
 
-                      <button className="cursor-pointer h-5 w-5 text-sm uppercase tracking-[0.18em] text-[#8a7f6e] hover:text-[#1c1c1c]">
+                      <button className="cursor-pointer h-5 w-5 text-sm uppercase tracking-[0.18em] text-[#8a7f6e] hover:text-[#1c1c1c]" onClick={() => {
+                        handleDeleteItems(
+                          {productId: product._id,
+                            variantId: item.variantId
+                          }
+                        )
+
+                        setCartItem((prev) =>
+                          prev.filter(
+                            (cart) =>
+                              !(cart.productId._id === product._id && cart.variantId === item.variantId)
+                          )
+                        );
+                      }}>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"

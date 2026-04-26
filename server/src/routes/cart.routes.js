@@ -5,6 +5,8 @@ import {
   addToCartController,
   getAllCartController,
   incrementQuantityController,
+  decrementQuantityController,
+  deleteQuantityController,
 } from "../controllers/cart.controller.js";
 
 const router = Router()
@@ -36,6 +38,20 @@ router.get("/", authMiddleware, getAllCartController)
  */
 
 router.patch("/quantity/increment/:productId/:variantId", authMiddleware,
-validateIncrementItemQuantity,incrementQuantityController);
+  validateIncrementItemQuantity, incrementQuantityController);
+
+/**
+ * @PATCH method
+ * @Api - /api/cart/quantity/decrement/:productId/:variantId
+ */
+
+router.patch("/quantity/decrement/:productId/:variantId", authMiddleware, decrementQuantityController);
+
+/**
+ * @DELETE method
+ * @Api - /api/cart/delete/:productId/:variantId
+ */
+
+router.delete("/delete/:productId/:variantId", authMiddleware, deleteQuantityController);
 
 export default router

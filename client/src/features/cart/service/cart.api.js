@@ -35,3 +35,25 @@ export const incrementCartItems = async ({productId, variantId}) => {
         throw error.message
     }
 }
+
+export const decrementCartItems = async({productId, variantId}) => {
+    try {
+        const response = await apiCartInstance.patch(
+          `/quantity/decrement/${productId}/${variantId}`,
+        );
+        return response.data
+    } catch (error) {
+        throw error.message
+    }
+}
+
+export const deleteCartItems = async({productId, variantId}) => {
+    try {
+        const response = await apiCartInstance.delete(
+          `/delete/${productId}/${variantId}`
+        );
+        return response.data
+    } catch (error) {
+        throw error.message
+    }
+}
