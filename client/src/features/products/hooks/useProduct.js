@@ -4,9 +4,10 @@ import {
   getAllProducts,
   getProductById,
   getSellerAllProducts,
-  addProductVariant
+  addProductVariant,
+  searchProducts
 } from "../service/product.api";
-import { setAllProducts, setSellerProducts } from "../state/product.slice";
+import { setAllProducts, setSearchResult, setSellerProducts } from "../state/product.slice";
 
 export const useProduct = () => {
   const dispatch = useDispatch();
@@ -58,11 +59,22 @@ export const useProduct = () => {
     }
   }
 
+  const handleSearchProducts = async (search) => {
+    try {
+      const data = await searchProducts(search)
+      console.log(data.product)
+      dispatch(setSearchResult(data.product));
+    } catch (error) {
+      throw error.message
+    }
+  }
+
   return {
     handleCreateProducts,
     handleGetSellerProduct,
     handleGetAllProducts,
     handleGetProductById,
     handleAddProductVariants,
+    handleSearchProducts
   };
 };

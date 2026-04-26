@@ -1,5 +1,5 @@
-import mongoose, {Schema} from "mongoose"
-import bcrypt from "bcrypt"
+import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcrypt";
 
 const userSchema = new Schema(
   {
@@ -12,15 +12,15 @@ const userSchema = new Schema(
     },
     contact: {
       type: String,
-      required: false,
-      unique: [true, "Contact is already exists"],
+      unique: true,
+      sparse: true,
       trim: true,
       match: [/^\d{10}$/, "Contact must be exactly 10 digits"],
     },
     password: {
       type: String,
-      required: function(){
-        return !this.googleId
+      required: function () {
+        return !this.googleId;
       },
       trim: true,
     },
@@ -36,8 +36,7 @@ const userSchema = new Schema(
     },
     googleId: {
       type: String,
-
-    }
+    },
   },
   {
     timestamps: true,
@@ -46,7 +45,7 @@ const userSchema = new Schema(
 
 userSchema.pre("save", async function () {
   try {
-    if (!this.isModified("password")) return ;
+    if (!this.isModified("password")) return;
 
     this.password = await bcrypt.hash(this.password, 10);
   } catch (error) {
@@ -55,8 +54,8 @@ userSchema.pre("save", async function () {
 });
 
 userSchema.methods.comparePassword = async function (password) {
-    return await bcrypt.compare(password, this.password)
+  return await bcrypt.compare(password, this.password);
 };
 
-const users = mongoose.model("user", userSchema)
-export default users
+const users = mongoose.model("user", userSchema);
+export default users;

@@ -36,6 +36,17 @@ export const getProductById = async (productId) => {
   }
 };
 
+export const searchProducts = async (search) => {
+  try {
+    const response = await productApiInstance.get(`/product/search`, {
+     params: {search}
+   });
+return response.data
+  } catch (error) {
+    throw error.message
+  }
+}
+
 export const addProductVariant = async (productId, newProductVariant) => {
   const formData = new FormData()
 

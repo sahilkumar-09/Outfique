@@ -6,6 +6,7 @@ import {
   getAllSellerProductsController,
   getProductByIdController,
   addProductVariantController,
+  getSearchController,
 } from "../controllers/product.controller.js";
 import multer from "multer"
 import { createProductValidator } from "../validators/product.validator.js"
@@ -30,6 +31,13 @@ router.post("/", sellerMiddleware, upload.array("productImages", 7),createProduc
  * @GET
  */
 router.get("/seller", sellerMiddleware, getAllSellerProductsController)
+
+/**
+ * @GET method
+ * @desc = get all the items
+ */
+
+router.get("/product/search", getSearchController)
 
 /**
  * @Get all products

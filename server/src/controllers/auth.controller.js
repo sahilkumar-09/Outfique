@@ -111,32 +111,26 @@ const userLoginController = async (req, res) => {
  * @GoogleSuccess controller
  */
 
-const googleSuccessController =async (req, res) => {
-    const {id, displayName, emails, photos} = req.user
-    const email = emails[0].value
-    const profilePic = photos[0].value
+const googleSuccessController = async (req, res) => {
+  const { id, displayName, emails, photos } = req.user;
+  const email = emails[0].value;
 
+  let user = await users.findOne({ email });
 
-    let user = await users.findOne({email})
+  if (!user) {
+    user = await users.create({
+      email,
+      googleId: id,
+      fullName: displayName,
+    });
+  }
 
-    if(!user){
-      user = await users.create({
-        email,
-        googleId: id,
-        fullName: displayName
-      })
-    }
-    
-    const token = jwt.sign({
-      id: user._id
-    }, configure.JWT_SECRET, 
-  {
-    expiresIn: configure.JWT_EXPIRE
-  })
+  const token = jwt.sign({ id: user._id }, configure.JWT_SECRET, {
+    expiresIn: configure.JWT_EXPIRE,
+  });
 
-  res.cookie("token", token)
-
-  res.redirect("http://localhost:5173/")
+  res.cookie("token", token);
+  res.redirect("http://localhost:5173/");
 };
 
 /**
