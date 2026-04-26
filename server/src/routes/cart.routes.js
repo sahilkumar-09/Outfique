@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { authMiddleware } from "../middlewares/user.middleware.js";
-import { cartValidation } from "../validators/cart.validator.js";
-import { addToCartController, getAllCartController } from "../controllers/cart.controller.js";
+import { cartValidation, validateIncrementItemQuantity } from "../validators/cart.validator.js";
+import {
+  addToCartController,
+  getAllCartController,
+  incrementQuantityController,
+} from "../controllers/cart.controller.js";
 
 const router = Router()
 
@@ -25,5 +29,13 @@ router.post(
  */
 
 router.get("/", authMiddleware, getAllCartController)
+
+/**
+ * @PATCH method
+ * @Api - /api/cart/quantity/increment/:productId/:variantId
+ */
+
+router.patch("/quantity/increment/:productId/:variantId", authMiddleware,
+validateIncrementItemQuantity,incrementQuantityController);
 
 export default router

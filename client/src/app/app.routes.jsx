@@ -8,12 +8,9 @@ import Home from "../features/products/pages/Home"
 import ProductDetail from "../features/products/pages/ProductDetail"
 import SellerProductDetail from "../features/products/pages/SellerProductDetail"
 import Cart from "../features/cart/pages/Cart"
+import AppLayout from "./AppLayout"
 
 export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
   {
     path: "/auth/user/register",
     element: <Register />,
@@ -23,44 +20,53 @@ export const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "/seller",
+    element: <AppLayout />,
     children: [
       {
-        path: "/seller/create-product",
-        element: (
-          <Protected role="seller">
-            <CreateProduct />
-          </Protected>
-        ),
+        path: "/",
+        element: <Home />,
       },
       {
-        path: "/seller/dashboard",
-        element: (
-          <Protected role="seller">
-            <Dashboard />
-          </Protected>
-        ),
+        path: "/seller",
+        children: [
+          {
+            path: "/seller/create-product",
+            element: (
+              <Protected role="seller">
+                <CreateProduct />
+              </Protected>
+            ),
+          },
+          {
+            path: "/seller/dashboard",
+            element: (
+              <Protected role="seller">
+                <Dashboard />
+              </Protected>
+            ),
+          },
+          {
+            path: "/seller/product/:productId",
+            element: (
+              <Protected role="seller">
+                <SellerProductDetail />
+              </Protected>
+            ),
+          },
+        ],
       },
       {
-        path: "/seller/product/:productId",
+        path: "/product/:productId",
+        element: <ProductDetail />,
+      },
+      {
+        path: "/cart",
         element: (
-          <Protected role="seller">
-            <SellerProductDetail />
+          <Protected>
+            <Cart />
           </Protected>
         ),
       },
     ],
-  },
-  {
-    path: "/product/:productId",
-    element: <ProductDetail />,
-  },
-  {
-    path: "/cart",
-    element: (
-      <Protected>
-        <Cart />
-      </Protected>
-    ),
   },
 ]);

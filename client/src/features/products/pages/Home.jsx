@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useProduct } from "../hooks/useProduct";
 import { Link, useNavigate } from "react-router";
-import Nav from "../components/Nav";
 
 const Home = () => {
   const products = useSelector((state) => state.product.allProducts);
@@ -28,7 +27,6 @@ const Home = () => {
         }}
       >
         {/* Navbar */}
-        <Nav />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24">
           {/* Hero Section */}

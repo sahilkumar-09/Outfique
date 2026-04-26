@@ -165,8 +165,6 @@ const getMeController = async (req, res) => {
   }
 }
 
-
-
 export {
   userRegisterController, userLoginController, googleSuccessController, getMeController
 };

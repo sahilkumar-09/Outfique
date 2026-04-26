@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useProduct } from "../hooks/useProduct";
-import Nav from "../components/Nav";
 import { useCart } from "../../cart/hooks/useCart";
 
 const sym = { INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
@@ -143,8 +142,6 @@ const ProductDetail = () => {
       className="min-h-screen bg-[#f0ede8]"
       style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
     >
-      <Nav />
-
       <div className="px-4 sm:px-6 md:px-10 lg:px-20 py-6 md:py-10 lg:py-14">
         {/* Back */}
         <button
@@ -298,13 +295,14 @@ const ProductDetail = () => {
                   handleAddToCart({
                     productId: product._id,
                     variantId: activeVariant?._id,
-                  })            }
-                className="flex-1 py-4 bg-[#1c1c1c] text-white text-xs tracking-[0.25em] uppercase hover:bg-transparent hover:border hover:border-[#1c1c1c] hover:text-[#1c1c1c] transition-all"
+                  })
+                }
+                className="flex-1 py-4 bg-[#1c1c1c] text-white text-xs tracking-[0.25em] uppercase hover:bg-[#333] hover:border hover:border-[#1c1c1c] hover:text-[#e1e1e1] transition-all active:scale-95 cursor-pointer"
               >
                 Add to Cart
               </button>
 
-              <button className="flex-1 py-4 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.25em] uppercase hover:bg-[#1c1c1c] hover:text-white transition-all">
+              <button className="flex-1 py-4 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.25em] uppercase hover:bg-[#eeeeee] active:scale-95 cursor-pointer transition-all">
                 Buy Now
               </button>
             </div>

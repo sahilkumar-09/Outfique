@@ -19,3 +19,9 @@ export const cartValidation = [
   body("quantity").isInt({ min: 1 }).withMessage("Quantity must be at least 1"),
   validate,
 ];
+
+export const validateIncrementItemQuantity = [
+  param("productId").isMongoId().withMessage("Invalid product id"),
+  param("variantId").isMongoId().withMessage("Invalid variant id"),
+  validate
+]

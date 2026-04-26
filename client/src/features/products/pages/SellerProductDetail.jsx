@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useProduct } from "../hooks/useProduct";
 import { useParams, useNavigate } from "react-router";
-import Nav from "../components/Nav";
 
 const sym = { INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
 
@@ -122,7 +121,6 @@ const SellerProductDetail = () => {
       className="min-h-screen bg-[#f0ede8]"
       style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
     >
-      <Nav />
 
       {!product ? (
         <div className="flex items-center justify-center min-h-[60vh]">

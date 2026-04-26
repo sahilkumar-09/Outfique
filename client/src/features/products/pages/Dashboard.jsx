@@ -109,7 +109,7 @@ const ProductCard = ({ product }) => {
       {/* Image */}
       <div
         className="relative overflow-hidden aspect-[3/4] bg-[#e8e4de]"
-        onClick={() => {  
+        onClick={() => {
           navigate(`/seller/product/${product._id}`);
         }}
       >

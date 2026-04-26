@@ -105,7 +105,7 @@ const addToCartController = async (req, res) => {
 
 const getAllCartController = async (req, res) => {
 
-  let cart = await carts.findOne({ user: req.user._id })
+  let cart = await carts.findOne({ user: req.user._id }).populate("items.productId")
     if (!cart) {
       cart = await carts.create({ user: req.user._id });
     }
@@ -116,4 +116,63 @@ const getAllCartController = async (req, res) => {
     });
 };
 
-export { addToCartController, getAllCartController };
+const incrementQuantityController = async(req, res) => {
+    const { productId, variantId } = req.params
+    
+    const product = await products.findOne({
+      _id: productId,
+      "variants._id": variantId
+    })
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found"
+      })
+    }
+
+    const cart = await carts.findOne({
+      user: req.user._id,
+      "items.product": productId,
+      "items.variant": variantId,
+    });
+
+    const stock = await stockVariant(productId, variantId)
+
+    const itemsQualityInCart = cart.items.find(item => item.product.toString() === productId && item.variant.toString() === variantId).quantity 
+
+    if(itemsQualityInCart + 1 > stock) {
+      return res.status(400).json({
+        success: false,
+        message: `Only ${stock} items left in stock and you already have ${itemsQualityInCart} in cart`
+      })
+    }
+
+    await carts.findOneAndUpdate(
+      {
+        user: req.user._id,
+        "items.product": productId,
+        "items.variant": variantId
+      },
+      {
+        $inc: {
+          "items.$.quantity": 1
+        }
+      },
+      {
+        new: true
+      }
+    )
+
+    return res.status(200).json({
+      success: true,
+      message: "Quantity incremented successfully"
+    })
+  
+}
+
+export {
+  addToCartController,
+  getAllCartController,
+  incrementQuantityController,
+};

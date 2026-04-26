@@ -24,3 +24,14 @@ export const getAllCartItems = async () => {
         throw error.message
     }
 }
+
+export const incrementCartItems = async ({productId, variantId}) => {
+    try {
+        const response = await apiCartInstance.patch(
+          `/quantity/increment/${productId}/${variantId}`,
+        );
+        return response.data
+    } catch (error) {
+        throw error.message
+    }
+}
