@@ -3,10 +3,17 @@ import { useCart } from "../hooks/useCart";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 
+const sym = { INR: "₹", JPY: "¥", GBP: "£", EUR: "€", USD: "$" };
+
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
   const [cartItem, setCartItem] = useState([]);
-  const { handleGetAllAddToCart, handleIncrementItems, handleDecrementItems, handleDeleteItems } = useCart();
+  const {
+    handleGetAllAddToCart,
+    handleIncrementItems,
+    handleDecrementItems,
+    handleDeleteItems,
+  } = useCart();
 
   const fetchData = async () => {
     const data = await handleGetAllAddToCart(cartItems);
@@ -19,13 +26,17 @@ const Cart = () => {
     fetchData();
   }, []);
 
-
   const subtotal = useMemo(() => {
     return cartItem.reduce(
       (total, item) => total + item.price.amount * item.quantity,
       0,
     );
   }, [cartItem]);
+
+  const getVariantDetails = (product, variantId) => {
+    if (!product.variants || !variantId) return null;
+    return product.variants.find((v) => v._id === variantId) ?? null;
+  };
 
   return (
     <div className="min-h-screen bg-[#f6f2eb] text-[#1c1c1c]">
@@ -47,10 +58,12 @@ const Cart = () => {
               const selectedVariant = product.variants.find(
                 (variant) => variant._id === item.variantId,
               );
-              console.log()
               const image =
                 selectedVariant?.productImages?.[0]?.url ||
                 product?.productImages?.[0]?.url;
+              const variantDetails = getVariantDetails(product, item.variantId);
+              const cartPrice = item.price; // stored when added to cart
+              const latestPrice = variantDetails?.price;
 
               return (
                 <div
@@ -85,17 +98,44 @@ const Cart = () => {
                       </div>
 
                       <p className="text-lg font-semibold text-[#1c1c1c]">
-                        {item.price.amount.toLocaleString()}
+                        {sym[latestPrice?.currency]}
+                        {latestPrice ? latestPrice.amount : "—"}
                       </p>
                       <small
                         className="text-[#a5a19b]
-                        tracking-[0.15em] uppercase"
+  tracking-[0.15em] uppercase"
                       >
                         Stocks -{" "}
                         <span className="font-semibold">
                           {selectedVariant.stock}
                         </span>
                       </small>
+
+                      {latestPrice?.amount !== cartPrice?.amount && (
+                        <div className="flex items-center gap-3 mt-1.5">
+                          <span className="line-through text-[#a5a19b] text-sm font-medium">
+                            {sym[cartPrice.currency]}{cartPrice?.amount}
+                          </span>
+
+                          <div className="text-xs font-semibold tracking-wide">
+                            {latestPrice.amount < cartPrice.amount ? (
+                              <span className="text-emerald-700 bg-emerald-50/80 border border-emerald-200 px-2 py-1 rounded-md flex items-center gap-1.5">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M20 6L9 17l-5-5"/>
+                                </svg>
+                                Save {sym[cartPrice.currency]}{cartPrice.amount - latestPrice.amount}
+                              </span>
+                            ) : (
+                              <span className="text-rose-700 bg-rose-50/80 border border-rose-200 px-2 py-1 rounded-md flex items-center gap-1.5">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M12 19V5M5 12l7-7 7 7"/>
+                                </svg>
+                                +{sym[latestPrice.currency]}{latestPrice.amount - cartPrice.amount}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Actions */}
@@ -142,26 +182,31 @@ const Cart = () => {
                             );
                           }}
                           disabled={selectedVariant.stock <= item.quantity}
-                          className="cursor-pointer px-3 py-2 hover:bg-[#ece7df] disabled:opacity-40 disabled:cursor-not-allowed "
+                          className="cursor-pointer px-3 py-2 hover:bg-[#ece7df] disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                           +
                         </button>
                       </div>
 
-                      <button className="cursor-pointer h-5 w-5 text-sm uppercase tracking-[0.18em] text-[#8a7f6e] hover:text-[#1c1c1c]" onClick={() => {
-                        handleDeleteItems(
-                          {productId: product._id,
-                            variantId: item.variantId
-                          }
-                        )
+                      <button
+                        className="cursor-pointer h-5 w-5 text-sm uppercase tracking-[0.18em] text-[#8a7f6e] hover:text-[#1c1c1c]"
+                        onClick={() => {
+                          handleDeleteItems({
+                            productId: product._id,
+                            variantId: item.variantId,
+                          });
 
-                        setCartItem((prev) =>
-                          prev.filter(
-                            (cart) =>
-                              !(cart.productId._id === product._id && cart.variantId === item.variantId)
-                          )
-                        );
-                      }}>
+                          setCartItem((prev) =>
+                            prev.filter(
+                              (cart) =>
+                                !(
+                                  cart.productId._id === product._id &&
+                                  cart.variantId === item.variantId
+                                ),
+                            ),
+                          );
+                        }}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"

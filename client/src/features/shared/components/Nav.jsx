@@ -7,7 +7,6 @@ const Nav = () => {
   const cartItems = useSelector(state => state.cart.items)
   
   const cartCount = cartItems?.length || 0
-  console.log(cartCount)
   return (
     <div className="bg-[#F6F2EB]">
       <nav className="px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 py-5 sm:py-8 flex flex-row items-center justify-between gap-4 border-b border-[#ccb58a]">
