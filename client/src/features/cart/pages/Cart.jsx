@@ -38,6 +38,7 @@ const Cart = () => {
     return product.variants.find((v) => v._id === variantId) ?? null;
   };
 
+  console.log(cartItems)
   return (
     <div className="min-h-screen bg-[#f6f2eb] text-[#1c1c1c]">
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-10">
@@ -55,6 +56,7 @@ const Cart = () => {
           <div className="space-y-6">
             {cartItem?.map((item) => {
               const product = item.productId;
+              console.log(product)
               const selectedVariant = product.variants.find(
                 (variant) => variant._id === item.variantId,
               );
@@ -113,25 +115,11 @@ const Cart = () => {
 
                       {latestPrice?.amount !== cartPrice?.amount && (
                         <div className="flex items-center gap-3 mt-1.5">
-                          <span className="line-through text-[#a5a19b] text-sm font-medium">
-                            {sym[cartPrice.currency]}{cartPrice?.amount}
-                          </span>
-
-                          <div className="text-xs font-semibold tracking-wide">
+                           <div className="text-xs font-semibold tracking-wide">
                             {latestPrice.amount < cartPrice.amount ? (
-                              <span className="text-emerald-700 bg-emerald-50/80 border border-emerald-200 px-2 py-1 rounded-md flex items-center gap-1.5">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M20 6L9 17l-5-5"/>
-                                </svg>
-                                Save {sym[cartPrice.currency]}{cartPrice.amount - latestPrice.amount}
-                              </span>
+                              <span className="text-red-500">Price Increased to {sym[latestPrice.currency]}{cartPrice.amount}</span>
                             ) : (
-                              <span className="text-rose-700 bg-rose-50/80 border border-rose-200 px-2 py-1 rounded-md flex items-center gap-1.5">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M12 19V5M5 12l7-7 7 7"/>
-                                </svg>
-                                +{sym[latestPrice.currency]}{latestPrice.amount - cartPrice.amount}
-                              </span>
+                              <span className="text-green-500">Price Dropped to {sym[latestPrice.currency]}{cartPrice.amount}</span>
                             )}
                           </div>
                         </div>

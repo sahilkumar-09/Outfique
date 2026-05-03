@@ -8,7 +8,7 @@ const SellerProductDetail = () => {
   const { handleAddProductVariants, handleGetProductById } = useProduct();
   const { productId } = useParams();
   const navigate = useNavigate();
-
+  
   const [product, setProduct] = useState(null);
   const [variants, setVariants] = useState([]);
 
@@ -321,8 +321,9 @@ const SellerProductDetail = () => {
               <p className="text-[#8a7f6e] text-lg">No variants added yet.</p>
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {variants.map((variant, index) => (
-                  <div
+                    {variants.map((variant, index) => (
+
+                      <div
                     key={index}
                     className="bg-[#f7f3ee] border border-[#e0dbd3] overflow-hidden"
                   >
