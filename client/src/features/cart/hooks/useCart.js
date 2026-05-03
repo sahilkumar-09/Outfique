@@ -13,8 +13,8 @@ export const useCart = () => {
 
     const handleGetAllAddToCart = async () => {
         const data = await getAllCartItems()
-        dispatch(setItems(data.cart.items))
-        return data.cart.items
+        dispatch(setItems(data.cart));
+        return data.cart
     }
 
     const handleIncrementItems = async ({ productId, variantId }) => {

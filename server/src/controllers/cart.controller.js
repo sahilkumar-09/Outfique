@@ -107,7 +107,7 @@ const addToCartController = async (req, res) => {
 };
 
 const getAllCartController = async (req, res) => {
-  let cart = await carts.aggregate([
+  let cart =( await carts.aggregate([
     {
       $match: {
         user: new mongoose.Types.ObjectId(req.user._id),
@@ -160,14 +160,14 @@ const getAllCartController = async (req, res) => {
         items: { $push: "$items" },
       },
     },
-  ]);
+  ]))[0];
   if (!cart) {
     cart = await carts.create({ user: req.user._id });
   }
   return res.status(200).json({
     success: true,
     message: "Cart fetched successfully",
-    cart,
+    cart: cart,
   });
 };
 

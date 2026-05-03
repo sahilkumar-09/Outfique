@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCart } from "../hooks/useCart";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -17,7 +17,7 @@ const Cart = () => {
 
   const fetchData = async () => {
     const data = await handleGetAllAddToCart(cartItems);
-    setCartItem(data || []);
+    setCartItem(data.items)
   };
 
   const navigate = useNavigate();
@@ -26,20 +26,11 @@ const Cart = () => {
     fetchData();
   }, []);
 
-  const subtotal = useMemo(() => {
-    return cartItem.reduce(
-      (total, item) => total + item.price.amount * item.quantity,
-      0,
-    );
-  }, [cartItem]);
+  const subtotal = cartItem.reduce((total, item) => {
+    return total + item.price.amount * item.quantity;
+  }, 0);
 
-  const getVariantDetails = (product, variantId) => {
-    if (!product.variants || !variantId) return null;
-    return product.variants.find((v) => v._id === variantId) ?? null;
-  };
-
-  console.log(cartItems)
-  return (
+ return (
     <div className="min-h-screen bg-[#f6f2eb] text-[#1c1c1c]">
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-10">
         {/* Heading */}
@@ -56,17 +47,12 @@ const Cart = () => {
           <div className="space-y-6">
             {cartItem?.map((item) => {
               const product = item.productId;
-              console.log(product)
-              const selectedVariant = product.variants.find(
-                (variant) => variant._id === item.variantId,
-              );
+              const selectedVariant = product.variants
               const image =
-                selectedVariant?.productImages?.[0]?.url ||
-                product?.productImages?.[0]?.url;
-              const variantDetails = getVariantDetails(product, item.variantId);
-              const cartPrice = item.price; // stored when added to cart
-              const latestPrice = variantDetails?.price;
-
+                product.productImages[0]?.url || "/outique_editorial_warm.png";
+              const variantPrice = product.price
+              const cartPrice = item.price
+              console.log(cartPrice);
               return (
                 <div
                   key={item._id}
@@ -100,8 +86,8 @@ const Cart = () => {
                       </div>
 
                       <p className="text-lg font-semibold text-[#1c1c1c]">
-                        {sym[latestPrice?.currency]}
-                        {latestPrice ? latestPrice.amount : "—"}
+                        {sym[variantPrice?.currency]}
+                        {variantPrice ? variantPrice.amount : "—"}
                       </p>
                       <small
                         className="text-[#a5a19b]
@@ -113,13 +99,13 @@ const Cart = () => {
                         </span>
                       </small>
 
-                      {latestPrice?.amount !== cartPrice?.amount && (
+                      {variantPrice?.amount !== cartPrice?.amount && (
                         <div className="flex items-center gap-3 mt-1.5">
                            <div className="text-xs font-semibold tracking-wide">
-                            {latestPrice.amount < cartPrice.amount ? (
-                              <span className="text-red-500">Price Increased to {sym[latestPrice.currency]}{cartPrice.amount}</span>
+                            {variantPrice.amount < cartPrice.amount ? (
+                              <span className="text-red-500">Price Increased to {sym[variantPrice.currency]}{cartPrice.amount}</span>
                             ) : (
-                              <span className="text-green-500">Price Dropped to {sym[latestPrice.currency]}{cartPrice.amount}</span>
+                              <span className="text-green-500">Price Dropped to {sym[variantPrice.currency]}{cartPrice.amount}</span>
                             )}
                           </div>
                         </div>
@@ -221,7 +207,7 @@ const Cart = () => {
             <div className="space-y-4 border-b border-[#d8cec0] pb-5">
               <div className="flex justify-between text-sm">
                 <span>Subtotal</span>
-                <span>₹{subtotal.toLocaleString()}</span>
+                <span></span>
               </div>
 
               <div className="flex justify-between text-sm">
@@ -232,7 +218,7 @@ const Cart = () => {
 
             <div className="flex justify-between mt-5 mb-6 text-lg font-semibold">
               <span>Total</span>
-              <span>₹{subtotal.toLocaleString()}</span>
+              <span>₹{subtotal}</span>
             </div>
 
             <div className="flex flex-col w-full gap-2">
@@ -254,6 +240,7 @@ const Cart = () => {
       </div>
     </div>
   );
+  
 };
 
 export default Cart;
