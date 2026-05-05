@@ -2,33 +2,76 @@ import React, { useEffect, useState } from "react";
 import { useCart } from "../hooks/useCart";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { useRazorpay } from "react-razorpay";
 
 const sym = { INR: "₹", JPY: "¥", GBP: "£", EUR: "€", USD: "$" };
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
+  const user = useSelector((state) => state.auth.user);
   const [cartItem, setCartItem] = useState([]);
   const {
     handleGetAllAddToCart,
     handleIncrementItems,
     handleDecrementItems,
     handleDeleteItems,
+    handleAddToCartOrder,
+    handleVerifyCartOrderPayment
   } = useCart();
 
-  const fetchData = async () => {
-    const data = await handleGetAllAddToCart(cartItems);
-    setCartItem(data.items)
-  };
+  const { error, isLoading, Razorpay } = useRazorpay();
+
+ 
 
   const navigate = useNavigate();
 
   useEffect(() => {
+     const fetchData = async () => {
+       const data = await handleGetAllAddToCart(cartItems);
+       setCartItem(data.items);
+     };
     fetchData();
   }, []);
 
   const subtotal = cartItem.reduce((total, item) => {
     return total + item.price.amount * item.quantity;
   }, 0);
+
+  async function handleCheckOut() { 
+    const order = await handleAddToCartOrder()
+    console.log(order);
+
+    const options = {
+      key: "rzp_test_Skzbfc4S9CRuaF",
+      amount: order.amount,
+      currency: order.currency,
+      name: "Outfique",
+      description: "Test Transaction",
+      order_id: order.id,
+      handler:  async (response) => {
+        const isValid = await handleVerifyCartOrderPayment({
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature
+        })
+
+        if (isValid) {
+         navigate(`/order/success?order_id=${response?.razorpay_order_id}`)
+        }
+      },
+      prefill: {
+        name: user?.fullName,
+        email: user?.email,
+        contact: user?.contact || ""
+      },
+      theme: {
+        color: "#F37254",
+      },
+    };
+
+    const razorpayInstance = new Razorpay(options);
+    razorpayInstance.open();
+  }
 
  return (
     <div className="min-h-screen bg-[#f6f2eb] text-[#1c1c1c]">
@@ -52,7 +95,7 @@ const Cart = () => {
                 product.productImages[0]?.url || "/outique_editorial_warm.png";
               const variantPrice = product.price
               const cartPrice = item.price
-              console.log(cartPrice);
+
               return (
                 <div
                   key={item._id}
@@ -222,7 +265,9 @@ const Cart = () => {
             </div>
 
             <div className="flex flex-col w-full gap-2">
-              <button className="w-full py-4 bg-[#1c1c1c] text-white text-xs uppercase tracking-[0.25em] hover:bg-[#333]  active:scale-95 cursor-pointer transition-all">
+             <button className="w-full py-4 bg-[#1c1c1c] text-white text-xs uppercase tracking-[0.25em] hover:bg-[#333]  active:scale-95 cursor-pointer transition-all" onClick={() => {
+                handleCheckOut()
+              }}>
                 Proceed to Checkout
               </button>
               <button

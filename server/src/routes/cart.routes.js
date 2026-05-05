@@ -7,6 +7,8 @@ import {
   incrementQuantityController,
   decrementQuantityController,
   deleteQuantityController,
+  createOrderController,
+  verifyOrderPaymentController,
 } from "../controllers/cart.controller.js";
 
 const router = Router()
@@ -53,5 +55,21 @@ router.patch("/quantity/decrement/:productId/:variantId", authMiddleware, decrem
  */
 
 router.delete("/delete/:productId/:variantId", authMiddleware, deleteQuantityController);
+
+/**
+ * @POST method
+ * @API -> /api/cart/payment/create/order
+ * @Desc -> Checkout cart and create order
+ */
+
+router.post("/payment/create/order", authMiddleware, createOrderController);
+
+/**
+ * @POST method
+ * @API -> /api/cart/payment/verify/order
+ * @Desc -> Verify order payment
+ */
+
+router.post("/payment/verify/order", authMiddleware, verifyOrderPaymentController);
 
 export default router

@@ -9,6 +9,10 @@ import ProductDetail from "../features/products/pages/ProductDetail"
 import SellerProductDetail from "../features/products/pages/SellerProductDetail"
 import Cart from "../features/cart/pages/Cart"
 import AppLayout from "./AppLayout"
+import OrderSuccess from "../features/cart/pages/OrderSuccess"
+import Orders from "../features/cart/pages/Orders"
+import OrderDetails from "../features/cart/pages/OrderDetails"
+import NotFound from "./NotFound"
 
 export const router = createBrowserRouter([
   {
@@ -67,6 +71,34 @@ export const router = createBrowserRouter([
           </Protected>
         ),
       },
+      {
+        path: "/order/success",
+        element: (
+          <Protected>
+            <OrderSuccess />
+          </Protected>
+        ),
+      },
+      {
+        path: "/view-orders",
+        element: (
+          <Protected>
+            <Orders />
+          </Protected>
+        ),
+      },
+      {
+        path: "/orders/:orderDetailId",
+        element: (
+          <Protected>
+            <OrderDetails />
+          </Protected>
+        ),
+      }
     ],
   },
+  {
+    path: "*",
+    element: <NotFound/>,
+  }
 ]);
