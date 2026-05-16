@@ -13,6 +13,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"))
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(cors({
@@ -47,5 +48,15 @@ app.use("/api/products", productRoutes)
  */
 
 app.use("/api/cart", cartRoutes)
+
+/**
+ * Wildcard route
+ */
+
+app.get("*name", (req, res) => {
+  res.sendFile("public/index.html",
+    {root: __dirname}
+  )
+})
 
 export default app;
