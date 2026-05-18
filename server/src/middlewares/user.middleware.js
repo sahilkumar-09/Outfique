@@ -1,16 +1,28 @@
 import jwt from "jsonwebtoken";
 import users from "../models/user.models.js";
 import configure from "../config/config.js";
+import redis from "../services/redis.service.js";
 
 const authMiddleware = async (req, res, next) => {
   try {
     const token = req.cookies.token;
+    
     if(!token) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized access",
-      });
+      })
     }
+
+    const isTokenBlackList = await redis.get(token)
+
+    if (isTokenBlackList) {
+      return res.status(401).json({
+        success: false,
+        message: "Internal token"
+      })
+    }
+    
     const decodedToken = jwt.verify(token, configure.JWT_SECRET);
     const user = await users.findById(decodedToken.id);
     if (!user) {

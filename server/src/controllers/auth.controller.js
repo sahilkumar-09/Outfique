@@ -2,6 +2,7 @@ import users from "../models/user.models.js";
 import jwt from "jsonwebtoken";
 import configure from "../config/config.js";
 import products from "../models/product.models.js";
+import redis from "../services/redis.service.js";
 
 const sendTokenResponse = async(user, res) => {
   const token = jwt.sign({ id: user._id }, configure.JWT_SECRET, {
@@ -159,6 +160,26 @@ const getMeController = async (req, res) => {
   }
 }
 
+const logoutController = async (req, res) => {
+  try {
+    const token = req.cookies.token
+    res.clearCookie("token")
+    await redis.set(token, Date.now().toString(), "EX", 60*60)
+
+    return res.status(200).json({
+      success: true,
+      message: "User logout successfully"
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message
+    }
+    )
+  } 
+}
+
 export {
-  userRegisterController, userLoginController, googleSuccessController, getMeController
+  userRegisterController, userLoginController, googleSuccessController, getMeController, logoutController
 };

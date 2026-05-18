@@ -4,7 +4,8 @@ import {
   userRegisterController,
   userLoginController,
   googleSuccessController,
-  getMeController
+  getMeController,
+  logoutController
 } from "../controllers/auth.controller.js";
 import passport from "passport";
 import configure from "../config/config.js"
@@ -44,5 +45,12 @@ router.get("/google/callback",
  */
 
 router.get("/me", authMiddleware, getMeController)
+
+/**
+ * @Logout_Routes
+ * @POST
+ */
+
+router.post("/logout", authMiddleware, logoutController)
 
 export default router
