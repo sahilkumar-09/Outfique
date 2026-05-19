@@ -160,6 +160,10 @@ const getMeController = async (req, res) => {
   }
 }
 
+/**
+ * @Logout controller
+ */
+
 const logoutController = async (req, res) => {
   try {
     const token = req.cookies.token

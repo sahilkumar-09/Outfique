@@ -1,6 +1,9 @@
 import { useDispatch } from "react-redux"
-import { setUser, setLoading, setError } from "../state/auth.slice"
-import { getMe, login, register } from "../services/auth.api"
+import { setUser, setLoading, setError, logout } from "../state/auth.slice"
+import { getMe, login, register } from "../services/auth.api";
+import { logout as logoutApi } from "../services/auth.api";
+import toast from "react-hot-toast";
+import { Navigate } from "react-router";
 
 export const useAuth = () => { 
     const dispatch = useDispatch()
@@ -29,5 +32,14 @@ export const useAuth = () => {
             dispatch(setLoading(false))
         }
     }
-    return { handleRegister, handleLogin, handleGetMe }
+
+    const handleLogout = async () => {
+        try {
+            await logoutApi()
+            dispatch(logout())
+        } catch (error) {
+          dispatch(setError(error.message))  
+        } 
+    }
+    return { handleRegister, handleLogin, handleGetMe, handleLogout }
 }

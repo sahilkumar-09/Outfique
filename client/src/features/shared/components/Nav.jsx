@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 
 const Nav = () => {
@@ -7,6 +7,7 @@ const Nav = () => {
   const cartItems = useSelector(state => state.cart.items)
   
   const cartCount = cartItems?.length || 0
+  const navigate = useNavigate()
   return (
     <div className="bg-[#F6F2EB]">
       <nav className="px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 py-5 sm:py-8 flex flex-row items-center justify-between gap-4 border-b border-[#ccb58a]">
@@ -29,7 +30,31 @@ const Nav = () => {
         >
           {user ? (
             <>
-              <span style={{ color: "#1b1c1a" }}>{user.fullname}</span>
+              <button
+                className="
+    cursor-pointer
+    bg-[#0b0b0b]
+    text-zinc-200
+    px-4
+    py-2
+    rounded-full
+    font-medium
+    shadow-lg
+    shadow-black/30
+    transition-all
+    duration-300
+    ease-out
+    hover:scale-105
+    hover:shadow-2xl
+    hover:shadow-blue-500/20
+    active:scale-95
+  "
+                onClick={() => {
+                  navigate("/user/profile")
+                }}
+              >
+                {user.fullname}
+              </button>
 
               {user.role === "seller" && (
                 <Link
