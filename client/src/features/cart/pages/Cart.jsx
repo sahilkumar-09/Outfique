@@ -42,27 +42,27 @@ const Cart = () => {
     console.log(order);
 
     const options = {
-      key: "rzp_test_Skzbfc4S9CRuaF",
+      key: import.meta.env.VITE_RAZORPAY_KEY,
       amount: order.amount,
       currency: order.currency,
       name: "Outfique",
       description: "Test Transaction",
       order_id: order.id,
-      handler:  async (response) => {
+      handler: async (response) => {
         const isValid = await handleVerifyCartOrderPayment({
           razorpay_order_id: response.razorpay_order_id,
           razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature
-        })
+          razorpay_signature: response.razorpay_signature,
+        });
 
         if (isValid) {
-         navigate(`/order/success?order_id=${response?.razorpay_order_id}`)
+          navigate(`/order/success?order_id=${response?.razorpay_order_id}`);
         }
       },
       prefill: {
         name: user?.fullName,
         email: user?.email,
-        contact: user?.contact || ""
+        contact: user?.contact || "",
       },
       theme: {
         color: "#F37254",

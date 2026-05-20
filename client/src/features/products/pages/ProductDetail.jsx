@@ -302,7 +302,9 @@ const ProductDetail = () => {
                 Add to Cart
               </button>
 
-              <button className="flex-1 py-4 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.25em] uppercase hover:bg-[#eeeeee] active:scale-95 cursor-pointer transition-all">
+              <button className="flex-1 py-4 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.25em] uppercase hover:bg-[#eeeeee] active:scale-95 cursor-pointer transition-all" onClick={() => {
+                navigate("/cart")
+              }}>
                 Buy Now
               </button>
             </div>
