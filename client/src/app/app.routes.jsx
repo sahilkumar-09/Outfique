@@ -13,7 +13,8 @@ import OrderSuccess from "../features/cart/pages/OrderSuccess"
 import Orders from "../features/cart/pages/Orders"
 import OrderDetails from "../features/cart/pages/OrderDetails"
 import NotFound from "./NotFound"
-import Profile from "../features/shared/pages/Profile"
+import Profile from "../features/profile/pages/Profile"
+import CreateProfile from "../features/profile/pages/CreateProfile"
 
 export const router = createBrowserRouter([
   {
@@ -23,10 +24,6 @@ export const router = createBrowserRouter([
   {
     path: "/auth/user/login",
     element: <Login />,
-  },
-  {
-    path: "/user/profile",
-    element: <Profile/>
   },
   {
     element: <AppLayout />,
@@ -99,6 +96,18 @@ export const router = createBrowserRouter([
             <OrderDetails />
           </Protected>
         ),
+      },
+      {
+        path: "/user/profile",
+        element: (<Protected>
+          <Profile/>
+        </Protected>)
+      },
+      {
+        path: "/create-profile/:userid",
+        element: <Protected>
+          <CreateProfile/>
+        </Protected>
       }
     ],
   },

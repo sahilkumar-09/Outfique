@@ -31,26 +31,9 @@ const Nav = () => {
           {user ? (
             <>
               <button
-                className="
-    cursor-pointer
-    bg-[#0b0b0b]
-    text-zinc-200
-    px-4
-    py-2
-    rounded-full
-    font-medium
-    shadow-lg
-    shadow-black/30
-    transition-all
-    duration-300
-    ease-out
-    hover:scale-105
-    hover:shadow-2xl
-    hover:shadow-blue-500/20
-    active:scale-95
-  "
+                className="flex-1 py-3 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.25em] uppercase hover:bg-[#eeeeee] active:scale-95 cursor-pointer transition-all px-2"
                 onClick={() => {
-                  navigate("/user/profile")
+                  navigate("/user/profile");
                 }}
               >
                 {user.fullname}

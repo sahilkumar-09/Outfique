@@ -8,6 +8,7 @@ import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
 import configure from "./config/config.js";
 import productRoutes from "./routes/product.route.js"
 import cartRoutes from "./routes/cart.routes.js"
+import profileRoutes from "./routes/profile.routes.js"
 
 const app = express();
 
@@ -48,6 +49,12 @@ app.use("/api/products", productRoutes)
  */
 
 app.use("/api/cart", cartRoutes)
+
+/**
+ * @profileRoutes
+ */
+
+app.use("/api/profile", profileRoutes)
 
 /**
  * Wildcard route

@@ -6,12 +6,13 @@ import toast from "react-hot-toast";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
+  console.log()
   const { handleLogout } = useAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const profileMenus = [
     {
-      title: "My Orders",
-      subtitle: "Track and manage your purchases",
+      title: "Shopping Cart",
+      subtitle: "Manage products ready for checkout",
       icon: "ri-shopping-bag-line",
     },
     {
@@ -30,6 +31,7 @@ const Profile = () => {
       icon: "ri-shield-check-line",
     },
   ];
+  const userid = user.id
 
   return (
     <div
@@ -69,6 +71,7 @@ const Profile = () => {
               shadow-lg
               hover:shadow-2xl
             "
+            onClick={() => navigate(`/create-profile/${userid}`)}
           >
             <i className="ri-pencil-line text-lg"></i>
             Edit Profile
