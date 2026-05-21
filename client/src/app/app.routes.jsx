@@ -15,6 +15,7 @@ import OrderDetails from "../features/cart/pages/OrderDetails"
 import NotFound from "./NotFound"
 import CreateProfile from "../features/profile/page/CreateProfile"
 import Profile from "../features/profile/page/Profile"
+import Wishlist from "../features/wishlist/pages/Wishlist"
 
 export const router = createBrowserRouter([
   {
@@ -106,6 +107,10 @@ export const router = createBrowserRouter([
       {
         path: "/create-profile/:userid",
         element: (<Protected><CreateProfile/></Protected>)
+      },
+      {
+        path: "/user/style-list",
+        element: <Protected><Wishlist/></Protected>
       }
     ],
   },

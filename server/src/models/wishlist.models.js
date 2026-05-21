@@ -1,5 +1,4 @@
 import mongoose from "mongoose"
-import priceSchema from "./price.schema.js"
 
 const wishListSchema = new mongoose.Schema({
     user: {
@@ -18,9 +17,6 @@ const wishListSchema = new mongoose.Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: `product.variants`,
                 required: true
-            },
-            price: {
-                type: priceSchema
             }
         }
     ]

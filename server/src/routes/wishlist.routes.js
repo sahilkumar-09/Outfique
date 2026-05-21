@@ -1,17 +1,18 @@
-import {Router} from "express"
-import { authMiddleware } from "../middlewares/user.middleware"
+import express from "express"
+import { authMiddleware } from "../middlewares/user.middleware.js"
 import {
   addToWishListController,
   getAllWishlistController,
   deleteWishlistController,
-} from "../controllers/wishlist.controller";
-const router = Router
+} from "../controllers/wishlist.controller.js";
+import { wishlistValidator } from "../validators/wishlist.validator.js";
 
+const router = express.Router()
 
-router.post("/add/:productId/:variantId", authMiddleware, addToWishListController)
+router.post("/add/:productId/:variantId", authMiddleware, wishlistValidator, addToWishListController)
 
-router.get("/wishlist", authMiddleware, getAllWishlistController)
+router.get("/", authMiddleware, getAllWishlistController)
 
-router.delete("/wishlist/:productId/:variantId", authMiddleware, deleteWishlistController)
+router.delete("/:productId/:variantId", authMiddleware, deleteWishlistController)
 
 export default router

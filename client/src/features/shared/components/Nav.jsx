@@ -73,6 +73,9 @@ const Nav = () => {
                 className="px-5 py-2 rounded-full bg-black text-white font-medium tracking-wide 
   transition-all duration-300 hover:bg-pink-600 hover:scale-105 
   active:scale-95 shadow-md hover:shadow-pink-300/50 text-m uppercase cursor-pointer"
+                onClick={() => {
+                  navigate("/user/style-list");
+                }}
               >
                 Style List
               </button>

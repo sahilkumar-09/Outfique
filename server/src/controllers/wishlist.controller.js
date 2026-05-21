@@ -1,8 +1,7 @@
 import products from "../models/product.models.js";
-import wishLists from "../models/wishlist.models";
+import wishLists from "../models/wishlist.models.js";
 
 const addToWishListController = async (req, res) => {
-  try {
     const { productId, variantId } = req.params;
     const product = await products.findOne({
       _id: productId,
@@ -17,13 +16,15 @@ const addToWishListController = async (req, res) => {
 
     let wishlist = await wishLists.findOne({ user: req.user._id });
 
-      if (!wishLists) {
+      if (!wishlist) {
           wishlist = await wishLists.create({user: req.user._id, items: []})
       }
 
       const isProductAlreadyInWishList = wishlist.items.find((item) => item.product?.toString() === productId
       && item.variant?.toString() === variantId)
 
+
+      
       if(isProductAlreadyInWishList){
           return res.status(400).json({
               success: false,
@@ -32,8 +33,8 @@ const addToWishListController = async (req, res) => {
       }
 
       wishlist.items.push({
-          product: productId,
-          variant: variantId,
+          productId: productId,
+          variantId: variantId,
       })
 
       await wishlist.save()
@@ -43,19 +44,13 @@ const addToWishListController = async (req, res) => {
           message: "Product added to wishlist",
           wishlist
       })
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Error while adding to wishlist",
-      error: error.message,
-    });
-  }
+
 };
 
 const getAllWishlistController = async (req, res) => {
     try {
         const user = req.user
-        const wishlist = await wishLists.findOne({user: user._id}).populate("items.product").populate("items.variants")
+        const wishlist = await wishLists.findOne({user: user._id}).populate("items.productId")
 
         if (!wishlist) {
             return res.status(400).json({
