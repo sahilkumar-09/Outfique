@@ -4,11 +4,11 @@ import { useWishlist } from '../hooks/useWishlist'
 import { useEffect } from 'react'
 
 const Wishlist = () => {
-    const [data, setData] = useState(null)
+    const [datas, setDatas] = useState(null)
     const { handleGetWishlist } = useWishlist();
 
     const fetchData = async() => {
-        await handleGetWishlist().then((res) => setData(res));
+        const data =await handleGetWishlist().then((res) => setData(res));
     }
     
     useEffect(() => {
