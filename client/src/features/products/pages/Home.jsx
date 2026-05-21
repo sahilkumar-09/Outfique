@@ -108,7 +108,6 @@ useEffect(() => {
                 ></i>
               </button>
 
-              
               {showSearch && openDropDown && search.trim() && (
                 <div className="absolute top-full left-0 right-0 mt-3 bg-white border shadow-lg rounded-2xl max-h-[400px] overflow-y-auto z-50">
                   {products.length > 0 ? (
@@ -158,7 +157,6 @@ useEffect(() => {
             >
               The Collection
             </span>
-
             <h1
               className="text-3xl sm:text-5xl lg:text-7xl font-light leading-tight mb-4 sm:mb-6"
               style={{
@@ -168,7 +166,6 @@ useEffect(() => {
             >
               Curated Archive
             </h1>
-
             <p
               className="max-w-xl mx-auto text-xs sm:text-base leading-relaxed px-2"
               style={{ color: "#7A6E63" }}
@@ -204,7 +201,6 @@ useEffect(() => {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
-
                     <h3
                       className="text-sm sm:text-xl group-hover:text-[#C9A96E]"
                       style={{ fontFamily: "'Cormorant Garamond', serif" }}
@@ -215,11 +211,13 @@ useEffect(() => {
                     <p className="text-xs sm:text-sm text-gray-500 line-clamp-2">
                       {product.description}
                     </p>
-
-                    <span className="text-xs mt-2">
-                      {product.price?.currency}{" "}
-                      {product.price?.amount?.toLocaleString()}
-                    </span>
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="text-xs mt-2">
+                        {product.price?.currency}{" "}
+                        {product.price?.amount?.toLocaleString()}
+                      </span>
+                      
+                    </div>
                   </div>
                 );
               })}

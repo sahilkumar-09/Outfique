@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 const Nav = () => {
   const user = useSelector((state) => state.auth.user);
   const cartItems = useSelector(state => state.cart.items)
-  
+
+
   const cartCount = cartItems?.length || 0
   const navigate = useNavigate()
   return (
@@ -67,6 +68,14 @@ const Nav = () => {
                   </span>
                 )}
               </Link>
+
+              <button
+                className="px-5 py-2 rounded-full bg-black text-white font-medium tracking-wide 
+  transition-all duration-300 hover:bg-pink-600 hover:scale-105 
+  active:scale-95 shadow-md hover:shadow-pink-300/50 text-m uppercase cursor-pointer"
+              >
+                Style List
+              </button>
             </>
           ) : (
             <>

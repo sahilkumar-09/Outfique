@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router";
-import { useProduct } from "../hooks/useProduct";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import { useCart } from "../../cart/hooks/useCart";
+import { useProduct } from "../hooks/useProduct";
 
 const sym = { INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
 
@@ -287,7 +287,30 @@ const ProductDetail = () => {
                 {product.description}
               </p>
             </div>
-
+            {/* wishlist */}
+            <button
+              className="
+      w-12
+      h-12
+      rounded-full
+      bg-white
+      border
+      border-gray-200
+      shadow-sm
+      flex
+      items-center
+      justify-center
+      hover:shadow-lg
+      hover:scale-110
+      transition-all
+      duration-300
+      cursor-pointer
+      active:scale-95
+    "
+            >
+              {" "}
+              <i className="ri-heart-line text-xl text-[#1b1c1a]"></i>
+            </button>
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
@@ -302,9 +325,12 @@ const ProductDetail = () => {
                 Add to Cart
               </button>
 
-              <button className="flex-1 py-4 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.25em] uppercase hover:bg-[#eeeeee] active:scale-95 cursor-pointer transition-all" onClick={() => {
-                navigate("/cart")
-              }}>
+              <button
+                className="flex-1 py-4 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.25em] uppercase hover:bg-[#eeeeee] active:scale-95 cursor-pointer transition-all"
+                onClick={() => {
+                  navigate("/cart");
+                }}
+              >
                 Buy Now
               </button>
             </div>
