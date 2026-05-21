@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useCart } from "../../cart/hooks/useCart";
 import { useProduct } from "../hooks/useProduct";
+import { useWishlist } from "../../wishlist/hooks/useWishlist";
 
 const sym = { INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
 
@@ -14,7 +15,7 @@ const ProductDetail = () => {
   const [selectedAttributes, setSelectedAttributes] = useState({});
 
   const { handleGetProductById } = useProduct();
-
+  const { handleAddWishlist } = useWishlist();
   // Fetch product
   useEffect(() => {
     async function fetchProduct() {
@@ -56,7 +57,7 @@ const ProductDetail = () => {
   const attributeOptions = useMemo(() => {
     if (!product?.variants) return {};
 
-    const attrs = {};
+    const attrs = {}; 
 
     product.variants.forEach((variant) => {
       Object.entries(variant.attributes || {}).forEach(([key, value]) => {
@@ -307,6 +308,9 @@ const ProductDetail = () => {
       cursor-pointer
       active:scale-95
     "
+              onClick={() => {
+                handleAddWishlist(product._id, product.variants[0]._id);
+              }}
             >
               {" "}
               <i className="ri-heart-line text-xl text-[#1b1c1a]"></i>

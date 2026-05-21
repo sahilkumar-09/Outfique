@@ -5,11 +5,10 @@ import {
   getAllWishlistController,
   deleteWishlistController,
 } from "../controllers/wishlist.controller.js";
-import { wishlistValidator } from "../validators/wishlist.validator.js";
 
 const router = express.Router()
 
-router.post("/add/:productId/:variantId", authMiddleware, wishlistValidator, addToWishListController)
+router.post("/add/:productId/:variantId", authMiddleware, addToWishListController)
 
 router.get("/", authMiddleware, getAllWishlistController)
 

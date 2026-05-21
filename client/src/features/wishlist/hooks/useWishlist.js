@@ -17,7 +17,7 @@ export const useWishlist = () => {
     const handleGetWishlist = async () => {
         try {
             const items = await getWishlist()
-            return items.wishlist
+            return items.wishlist;
         } catch (error) {
             throw error.message
         }
