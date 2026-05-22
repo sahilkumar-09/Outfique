@@ -1,22 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useWishlist } from "../hooks/useWishlist";
+import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 const Wishlist = () => {
-  const [data, setData] = useState(null);
+  const items = useSelector(state => state.wishlist.items)
+  const { handleGetWishlist, handleDeleteWishlist } = useWishlist();
 
-  const { handleGetWishlist } = useWishlist();
 
-  const fetchData = async () => {
-    const res = await handleGetWishlist();
-    setData(res);
-  };
 
   useEffect(() => {
-    fetchData();
+    handleGetWishlist()
   }, []);
 
-  const items = data?.items || [];
 
+  const navigate = useNavigate()
   return (
     <>
       <link
@@ -80,12 +78,20 @@ const Wishlist = () => {
                   className="w-10 h-10 border border-gray-300 
             flex items-center justify-center hover:bg-black 
             hover:text-white transition-all duration-300"
+                  onClick={() => {
+                    handleDeleteWishlist(product._id, variant?._id);
+                  }}
                 >
                   <i className="ri-delete-bin-line text-lg"></i>
                 </button>
                 {/* PRODUCT */}
                 <div className="flex items-center gap-4">
-                  <div className="w-24 h-28 bg-gray-100 overflow-hidden">
+                  <div
+                    className="w-24 h-28 bg-gray-100 overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-105 rounded-2xl"
+                    onClick={() => {
+                      navigate(`/product/${product._id}`);
+                    }}
+                  >
                     <img
                       src={
                         variant?.productImages?.[0]?.url ||
@@ -144,7 +150,10 @@ const Wishlist = () => {
                   <button
                     className="bg-black text-white px-8 py-3 
               uppercase tracking-[0.15em] text-xs 
-              hover:bg-[#1b1c1a] transition-all duration-300"
+              hover:bg-[#1b1c1a] transition-all duration-300 active:scale-95 cursor-pointer"
+                    onClick={() => {
+                      navigate("/cart")
+                    }}
                   >
                     Add To Cart
                   </button>
@@ -179,7 +188,10 @@ const Wishlist = () => {
 
             <button
               className="mt-8 bg-black text-white px-10 py-4 
-        uppercase tracking-[0.2em] text-xs"
+        uppercase tracking-[0.2em] text-xs cursor-pointer"
+              onClick={() => {
+                navigate('/')
+              }}
             >
               Explore Collection
             </button>

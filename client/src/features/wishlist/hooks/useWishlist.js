@@ -1,5 +1,5 @@
 import {useDispatch} from "react-redux"
-import { addItems, deleteItems } from "../state/wishlist.state"
+import { addItems, deleteItems, setItems } from "../state/wishlist.state"
 import { addWishlist, deleteWishList, getWishlist } from "../service/wishlist.api"
 
 export const useWishlist = () => {
@@ -17,7 +17,7 @@ export const useWishlist = () => {
     const handleGetWishlist = async () => {
         try {
             const items = await getWishlist()
-            return items.wishlist;
+                 dispatch(setItems(items.wishlist.items));
         } catch (error) {
             throw error.message
         }

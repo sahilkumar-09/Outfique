@@ -14,7 +14,7 @@ const wishlistSlice = createSlice({
         },
         deleteItems: (state, action) => {
             const {productId, variantId} = action.payload
-            state.items = state.items.filter((item) => !(item.productId === productId && item.variantId === variantId))
+            state.items = state.items.filter((item) => !(item.productId._id === productId && item.variantId === variantId))
         }
     }
 })

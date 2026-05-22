@@ -42,7 +42,7 @@ const Profile = () => {
       title: "Wishlist",
       subtitle: "Your saved luxury selections",
       icon: "ri-heart-3-line",
-      path: `/wishlist/${userid}`,
+      path: `/user/style-list`,
     },
     {
       title: "Security",

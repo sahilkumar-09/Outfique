@@ -75,7 +75,6 @@ const getAllWishlistController = async (req, res) => {
 
 const deleteWishlistController = async (req, res) => {
 
-    try {
         const { productId, variantId } = req.params;
 
         const wishlist = await wishLists.findOne({
@@ -91,7 +90,7 @@ const deleteWishlistController = async (req, res) => {
           });
         }
 
-        await wishLists.findByIdAndUpdate(
+        await wishLists.findOneAndUpdate(
           { user: req.user._id },
           {
             $pull: {
@@ -107,14 +106,7 @@ const deleteWishlistController = async (req, res) => {
             success: true,
             message: "Items removed from wishlist successfully"
         })
-    } catch (error) {
-        return res.status(500).json({
-        success: false,
-        message: "Error while deleting wishlist",
-        error: error.message,
-      })
-    }
-
+    
 }
 
 export { addToWishListController, getAllWishlistController, deleteWishlistController };
