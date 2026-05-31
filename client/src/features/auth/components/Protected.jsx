@@ -1,3 +1,4 @@
+import Spinner from '@/components/loader/Spiner'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router'
@@ -8,7 +9,7 @@ const Protected = ({children, role="buyer"}) => {
   const loading = useSelector(state => state.auth.loading)
 
   if (loading){
-    return <div>Loading...</div>
+    return <Spinner />
   }
   if (!user) {
     return <Navigate to="/auth/user/login" />
