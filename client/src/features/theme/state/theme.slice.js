@@ -8,7 +8,7 @@ const getInitialTheme = () => {
     const saveTheme = localStorage.getItem("theme")
 
     if (saveTheme) {
-        saveTheme()
+        saveTheme
     } else {
         getSystemTheme()
     }

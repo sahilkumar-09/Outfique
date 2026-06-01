@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router";
 import { useCart } from "../../cart/hooks/useCart";
 import { useProduct } from "../hooks/useProduct";
 import { useWishlist } from "../../wishlist/hooks/useWishlist";
+import { useSelector } from "react-redux";
+import {toast} from "sonner"
 
 const sym = { INR: "₹", USD: "$", EUR: "€", GBP: "£", JPY: "¥" };
 
@@ -13,9 +15,10 @@ const ProductDetail = () => {
   const [activeImage, setActiveImage] = useState(0);
   const [product, setProduct] = useState(null);
   const [selectedAttributes, setSelectedAttributes] = useState({});
-
   const { handleGetProductById } = useProduct();
   const { handleAddWishlist } = useWishlist();
+  const user = useSelector(state => state.auth.user)
+
   // Fetch product
   useEffect(() => {
     async function fetchProduct() {
@@ -137,7 +140,30 @@ const ProductDetail = () => {
     setActiveImage((prev) =>
       prev === 0 ? displayImages.length - 1 : prev - 1,
     );
+  
+  const handleCartCheckOption = () => {
+    if (!user) {
+        toast.error("Please login first to add to cart")
+        return 
+    }
 
+    handleAddToCart({
+      productId: product._id,
+      variantId: activeVariant._id
+    })
+    }
+
+  const handleWishListCheckOption = () => {
+    if (!user) {
+      toast.error("Please login first to add to wishlist")
+      return
+    }
+
+    handleAddToCart({
+      productId: product._id,
+      variantId: activeVariant._id
+    })
+  }
   return (
     <div
       className="min-h-screen bg-[#f0ede8]"
@@ -309,7 +335,7 @@ const ProductDetail = () => {
       active:scale-95
     "
               onClick={() => {
-                handleAddWishlist(product._id, product.variants[0]._id);
+                handleWishListCheckOption()
               }}
             >
               {" "}
@@ -319,10 +345,7 @@ const ProductDetail = () => {
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 onClick={() =>
-                  handleAddToCart({
-                    productId: product._id,
-                    variantId: activeVariant?._id,
-                  })
+                  handleCartCheckOption()
                 }
                 className="flex-1 py-4 bg-[#1c1c1c] text-white text-xs tracking-[0.25em] uppercase hover:bg-[#333] hover:border hover:border-[#1c1c1c] hover:text-[#e1e1e1] transition-all active:scale-95 cursor-pointer"
               >

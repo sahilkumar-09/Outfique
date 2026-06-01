@@ -5,6 +5,7 @@ import {useDispatch, useSelector}  from "react-redux"
 import { useAuth } from '../features/auth/hooks/useAuth'
 import "remixicon/fonts/remixicon.css";
 import { updateTheme } from '@/features/theme/state/theme.slice'
+import { Toaster } from '@/components/ui/sonner'
 
 const App = () => {
   useSelector(state => state.auth.user)
@@ -36,6 +37,7 @@ const App = () => {
 
   return (
     <>
+      <Toaster richColors position="top-center" />
       <RouterProvider router={router}/>
     </>
   )
