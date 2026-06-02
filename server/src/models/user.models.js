@@ -38,6 +38,21 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
+    otp: {
+    type: String,
+    required: false,
+    },
+    isVerify: { 
+      type: Boolean,
+      default: false,
+    },
+    otpExpiry: {
+      type: Date,
+      index: ({expires: 5 * 60 * 1000})
+    },
+    mfaToken: {
+      type: String,
+    },
     googleId: {
       type: String,
     },

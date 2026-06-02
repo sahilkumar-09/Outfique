@@ -5,7 +5,8 @@ import {
   userLoginController,
   googleSuccessController,
   getMeController,
-  logoutController
+  logoutController,
+  verifyEmailController,
 } from "../controllers/auth.controller.js";
 import passport from "passport";
 import configure from "../config/config.js"
@@ -52,5 +53,12 @@ router.get("/me", authMiddleware, getMeController)
  */
 
 router.post("/logout", authMiddleware, logoutController)
+
+/**
+ * @Verify OTP
+ * @GET
+ */
+
+router.post("/verify-otp", authMiddleware, verifyEmailController)
 
 export default router

@@ -11,3 +11,8 @@ export const generateRefreshToken = (userid) => {
 
     return refreshToken
 }
+
+export const generateMfaToken = (userid) => {
+    const mfaToken = jwt.sign({ userid }, configure.MFA_TOKEN_SECRET, {expiresIn: configure.MFA_TOKEN_EXPIRES_IN})
+    return mfaToken
+}
