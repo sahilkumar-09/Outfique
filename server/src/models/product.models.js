@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose"
 import priceSchema from "./price.schema.js"
 import variantSchema from "./variants.schema.js";
+import slugify from "slugify";
 
 const productSchema = new Schema(
   {
@@ -15,11 +16,11 @@ const productSchema = new Schema(
     seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
-      required: true
+      required: true,
     },
     price: {
       type: priceSchema,
-      required: true
+      required: true,
     },
     productImages: [
       {
@@ -33,21 +34,30 @@ const productSchema = new Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "category",
-      required: true
+      required: true,
     },
-    brand: {
+    productSlug: {
       type: String,
-      trim: true
+      unique: true,
     },
-    status: {
-      type: String,
-      enum: ["draft", "active", "archived"]
-    }
   },
   {
     timestamps: true,
   },
 );
+
+
+productSchema.pre("save", function () {
+  if (this.isModified("productSlug")) {
+    this.productSlug = slugify(this.title, {
+      strict: true,
+      lower: true,
+      trim: true,
+    })
+  }
+})
+
+productSchema.index({title: "text", description: "text"})
 
 productSchema.virtual("totalStock").get(function () {
   return this.variants.reduce((total, variant)=> total + variant.stock)

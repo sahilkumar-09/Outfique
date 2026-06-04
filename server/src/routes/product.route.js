@@ -7,7 +7,7 @@ import {
   getProductByIdController,
   addProductVariantController,
   getSearchController,
-  getProductByCategoryController,
+  getAllProductByCategoryController,
 } from "../controllers/product.controller.js";
 import multer from "multer"
 import { createProductValidator } from "../validators/product.validator.js"
@@ -68,6 +68,6 @@ router.post(
  * @Desc => Get product by category 
  */
 
-router.get("/category/:slug", getProductByCategoryController)
+router.get("/category/:slug", getAllProductByCategoryController)
 
 export default router

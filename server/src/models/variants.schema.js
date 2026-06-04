@@ -20,7 +20,7 @@ const variantSchema = new Schema(
 
     attributes: {
       type: Map,
-      of: String,
+      of: Schema.Types.Mixed,
     },
 
     price: {
