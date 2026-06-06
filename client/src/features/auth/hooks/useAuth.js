@@ -2,8 +2,6 @@ import { useDispatch } from "react-redux"
 import { setUser, setLoading, setError, logout } from "../state/auth.slice"
 import { getMe, login, register } from "../services/auth.api";
 import { logout as logoutApi } from "../services/auth.api";
-import toast from "react-hot-toast";
-import { Navigate } from "react-router";
 
 export const useAuth = () => { 
     const dispatch = useDispatch()
