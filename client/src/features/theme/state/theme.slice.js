@@ -34,8 +34,9 @@ const themeSlice = createSlice({
             }
         },
         updateTheme: (state) => {
-            if (state.mode === "system") {state.actualTheme === getSystemTheme(); }
-            
+            if (state.mode === "system") {
+               state.actualTheme = getSystemTheme()
+           }            
         }
     }
 })

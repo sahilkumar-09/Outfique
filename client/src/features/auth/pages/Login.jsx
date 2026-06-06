@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import ContinueWithGoogle from "../components/ContinueWithGoogle";
+import ThemeToggle from "@/features/theme/components/ThemeToggle";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -88,7 +89,11 @@ export default function Login() {
           </p>
         </div>
       </div>
-
+      <div className="relative z-10">
+        <div className="fixed top-4 right-4 md:top-6 md:right-6 z-50">
+          <ThemeToggle />
+        </div>
+      </div>
       {/* ── RIGHT PANEL  ── */}
       <div className="flex-1 flex items-center justify-center bg-white dark:bg-[#111] px-8 sm:px-16 lg:px-20 transition-colors duration-300">
         <div className="w-full max-w-md">

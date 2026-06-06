@@ -1,106 +1,536 @@
-import React from "react";
+import { setTheme } from "@/features/theme/state/theme.slice";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
-import { useSelector } from "react-redux";
 
-const Nav = () => {
-  const user = useSelector((state) => state.auth.user);
-  const cartItems = useSelector(state => state.cart.items)
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 
+// ─── Theme Toggle ─────────────────────────────────────────────────────────────
+const ThemeToggle = () => {
+  const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme.mode);
 
-  const cartCount = cartItems?.length || 0
-  const navigate = useNavigate()
+  const options = [
+    { value: "light", label: "Light", icon: "ri-sun-fill" },
+    { value: "dark", label: "Dark", icon: "ri-moon-clear-fill" },
+    { value: "system", label: "System", icon: "ri-computer-fill" },
+  ];
+
+  const getCurrentIcon = () => {
+    if (theme === "light") return "ri-sun-fill";
+    if (theme === "dark") return "ri-moon-clear-fill";
+    return "ri-computer-fill";
+  };
+
   return (
-    <div className="bg-[#F6F2EB]">
-      <nav className="px-3 sm:px-6 md:px-10 lg:px-16 xl:px-24 py-3 sm:py-4 flex flex-row items-center justify-between gap-4 border-b border-[#ccb58a]">
-        {/* Logo */}
-        <Link
-          to="/"
-          className="text-lg sm:text-xl font-medium tracking-[0.25em] uppercase hover:opacity-80 transition-opacity"
-          style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            color: "#C9A96E",
-          }}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Change Theme"
+          className="cursor-pointer flex items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-600 dark:text-zinc-300 transition-all duration-200 hover:border-[#e63b1f]/50 hover:text-[#e63b1f] focus:outline-none active:scale-95"
         >
-          Outfique.
-        </Link>
+          <i className={`${getCurrentIcon()} text-[15px]`} />
+        </button>
+      </DropdownMenuTrigger>
 
-        {/* Right Section */}
-        <div
-          className="flex items-center gap-4 sm:gap-6 text-[10px] sm:text-xs uppercase tracking-[0.15em] font-medium"
-          style={{ color: "#7A6E63" }}
-        >
-          {user ? (
-            <>
-              <button
-                className="flex-1 py-3 border border-[#1c1c1c] text-[#1c1c1c] text-xs tracking-[0.25em] uppercase hover:bg-[#eeeeee] active:scale-95 cursor-pointer transition-all px-2"
-                onClick={() => {
-                  navigate("/user/profile");
-                }}
-              >
-                {user.fullname}
-              </button>
+      <DropdownMenuContent
+        align="end"
+        className="w-40 rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#141414] shadow-xl p-1"
+      >
+        <div className="px-3 py-2 text-[10px] font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
+          Appearance
+        </div>
+        {options.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onClick={() => dispatch(setTheme(option.value))}
+            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm cursor-pointer transition-all duration-200 focus:outline-none ${
+              theme === option.value
+                ? "bg-[#e63b1f]/10 text-[#e63b1f]"
+                : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/5"
+            }`}
+          >
+            <i className={`${option.icon} text-base`} />
+            <span className="flex-1 font-medium">{option.label}</span>
+            {theme === option.value && (
+              <div className="w-1.5 h-1.5 rounded-full bg-[#e63b1f]" />
+            )}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
-              {user.role === "seller" && (
-                <Link
-                  to="/seller/dashboard"
-                  className="transition-colors hover:text-[#C9A96E]"
-                >
-                  Seller Dashboard
-                </Link>
-              )}
+// ─── Icon Button ──────────────────────────────────────────────────────────────
+const NavIconBtn = ({ icon, label, onClick }) => (
+  <button
+    type="button"
+    aria-label={label}
+    onClick={onClick}
+    className="cursor-pointer flex items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-600 dark:text-zinc-300 transition-all duration-200 hover:border-[#e63b1f]/50 hover:text-[#e63b1f] focus:outline-none active:scale-95"
+  >
+    <i className={`${icon} text-[15px]`} />
+  </button>
+);
 
-              {/* Cart Icon */}
-              <Link
-                to="/cart"
-                className="w-5 h-5 hover:text-[#C9A96E] transition-colors relative"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-full h-full"
-                >
-                  <path d="M6.00488 9H19.9433L20.4433 7H8.00488V5H21.7241C22.2764 5 22.7241 5.44772 22.7241 6C22.7241 6.08176 22.7141 6.16322 22.6942 6.24254L20.1942 16.2425C20.083 16.6877 19.683 17 19.2241 17H5.00488C4.4526 17 4.00488 16.5523 4.00488 16V4H2.00488V2H5.00488C5.55717 2 6.00488 2.44772 6.00488 3V9ZM6.00488 23C4.90031 23 4.00488 22.1046 4.00488 21C4.00488 19.8954 4.90031 19 6.00488 19C7.10945 19 8.00488 19.8954 8.00488 21C8.00488 22.1046 7.10945 23 6.00488 23ZM18.0049 23C16.9003 23 16.0049 22.1046 16.0049 21C16.0049 19.8954 16.9003 19 18.0049 19C19.1095 19 20.0049 19.8954 20.0049 21C20.0049 22.1046 19.1095 23 18.0049 23Z"></path>
-                </svg>
-                {cartCount > 0 && (
-                  <span className="absolute -top-3 -right-3  text-[12px] font-bold  min-w-[16px] h-4 px-1 flex items-center justify-center text-zinc-700 ">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
+// ─── Dropdown Item ────────────────────────────────────────────────────────────
+const DropdownItem = ({ icon, label, onClick }) => (
+  <DropdownMenuItem
+    onClick={onClick}
+    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm cursor-pointer text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/5 transition-all duration-200 focus:outline-none"
+  >
+    <i className={`${icon} text-base text-zinc-400 dark:text-zinc-500`} />
+    <span className="font-medium">{label}</span>
+  </DropdownMenuItem>
+);
 
-              <button
-                className="px-5 py-2 rounded-full bg-black text-white font-medium tracking-wide 
-  transition-all duration-300 hover:bg-pink-600 hover:scale-105 
-  active:scale-95 shadow-md hover:shadow-pink-300/50 text-m uppercase cursor-pointer"
-                onClick={() => {
-                  navigate("/user/style-list");
-                }}
-              >
-                Style List
-              </button>
-            </>
-          ) : (
-            <>
+// ─── Main Navbar ──────────────────────────────────────────────────────────────
+const Navbar = () => {
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const searchRef = useRef(null);
+
+  // ⚠️ Replace with your actual Redux auth selector
+  const user = useSelector((state) => state.auth.user); // { email, role } | null
+  const isSeller = user?.role === "seller";
+
+  // Close sidebar on desktop resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setSidebarOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Lock body scroll when sidebar is open
+  useEffect(() => {
+    document.body.style.overflow = sidebarOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [sidebarOpen]);
+
+  const handleSearch = (e) => {
+    if (e.key === "Enter" && search.trim()) {
+      navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+      setSearchOpen(false);
+    }
+  };
+
+  const handleLogout = () => {
+    // dispatch(logoutAction()) — add your logout dispatch here
+    setSidebarOpen(false);
+    navigate("/auth/user/login");
+  };
+
+  const goTo = (path) => {
+    navigate(path);
+    setSidebarOpen(false);
+  };
+
+  return (
+    <>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');`}</style>
+
+      {/* ══════════════ NAVBAR ══════════════ */}
+      <header className="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-white/[0.07] bg-white dark:bg-[#0d0d0d] transition-colors duration-300">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 h-[58px] flex items-center gap-3">
+          {/* Mobile hamburger */}
+          <button
+            type="button"
+            aria-label="Open menu"
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-600 dark:text-zinc-300 hover:text-[#e63b1f] hover:border-[#e63b1f]/50 transition-all duration-200 focus:outline-none flex-shrink-0"
+          >
+            <i className="ri-menu-line text-[16px]" />
+          </button>
+
+          {/* Brand */}
+          <Link
+            to="/"
+            className="flex-shrink-0 leading-none select-none"
+            style={{
+              fontFamily: "'Bebas Neue', 'Anton', sans-serif",
+              fontSize: "1.55rem",
+              letterSpacing: "0.05em",
+            }}
+          >
+            <span className="text-zinc-900 dark:text-white">OUT</span>
+            <span className="text-[#e63b1f]">FIQUE</span>
+          </Link>
+
+          {/* Seller dashboard link — desktop only */}
+          {isSeller && (
+            <Link
+              to="/seller/dashboard"
+              className="hidden md:block text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-400 dark:text-zinc-500 hover:text-[#e63b1f] transition-colors duration-200 ml-1 flex-shrink-0"
+            >
+              Dashboard
+            </Link>
+          )}
+
+          {/* Search bar — desktop */}
+          <div className="hidden md:flex flex-1 max-w-[420px] mx-auto relative">
+            <i className="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 text-sm pointer-events-none z-10" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleSearch}
+              placeholder="Search products…"
+              className="pl-9 pr-4 h-9 w-full text-[13px] rounded-full bg-zinc-100 dark:bg-white/[0.06] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-[#e63b1f]/40 focus-visible:border-[#e63b1f]/40 transition-all duration-200"
+            />
+          </div>
+
+          {/* Right icon group */}
+          <div className="flex items-center gap-1.5 ml-auto flex-shrink-0">
+            {/* Mobile search toggle */}
+            <button
+              type="button"
+              aria-label="Search"
+              onClick={() => {
+                setSearchOpen((v) => !v);
+                setTimeout(() => searchRef.current?.focus(), 120);
+              }}
+              className="md:hidden flex items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-600 dark:text-zinc-300 hover:text-[#e63b1f] hover:border-[#e63b1f]/50 transition-all duration-200 focus:outline-none"
+            >
+              <i
+                className={`${searchOpen ? "ri-close-line" : "ri-search-line"} text-[15px]`}
+              />
+            </button>
+
+            {/* Wishlist + Cart — logged in only */}
+            {user && (
+              <>
+                <div className="hidden md:block">
+                  <NavIconBtn
+                    icon="ri-heart-3-line"
+                    label="Wishlist"
+                    onClick={() => navigate("/wishlist")}
+                  />
+                </div>
+                <div className="hidden md:block">
+                  <NavIconBtn
+                    icon="ri-shopping-bag-3-line"
+                    label="Cart"
+                    onClick={() => navigate("/cart")}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Theme toggle */}
+            <div className="hidden md:block">
+              <ThemeToggle />
+            </div>
+
+            {/* User dropdown OR Sign In */}
+            {user ? (
+              <div className="hidden md:block">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="User menu"
+                      className="cursor-pointer flex items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-600 dark:text-zinc-300 transition-all duration-200 hover:border-[#e63b1f]/50 hover:text-[#e63b1f] focus:outline-none active:scale-95"
+                    >
+                      <i className="ri-user-3-line text-[15px]" />
+                    </button>
+                  </DropdownMenuTrigger>
+
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-56 rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#141414] shadow-2xl p-1 mt-1"
+                  >
+                    {/* Email + badge */}
+                    <div className="px-3 py-2.5 border-b border-zinc-100 dark:border-white/[0.07] mb-1">
+                      <p className="text-[12px] font-semibold text-zinc-800 dark:text-white truncate leading-snug">
+                        {user.email}
+                      </p>
+                      {isSeller ? (
+                        <span className="inline-flex items-center gap-1 mt-1 text-[9px] font-bold tracking-[0.18em] uppercase px-2 py-0.5 rounded-full bg-[#e63b1f]/10 text-[#e63b1f]">
+                          <i className="ri-store-2-line text-[9px]" /> Seller
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 mt-1 text-[9px] font-bold tracking-[0.18em] uppercase px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-white/8 text-zinc-500 dark:text-zinc-400">
+                          <i className="ri-user-line text-[9px]" /> Buyer
+                        </span>
+                      )}
+                    </div>
+
+                    <DropdownItem
+                      icon="ri-user-3-line"
+                      label="Profile"
+                      onClick={() => navigate("/profile")}
+                    />
+                    <DropdownItem
+                      icon="ri-heart-3-line"
+                      label="Wishlist"
+                      onClick={() => navigate("/wishlist")}
+                    />
+                    <DropdownItem
+                      icon="ri-shopping-bag-3-line"
+                      label="Cart"
+                      onClick={() => navigate("/cart")}
+                    />
+
+                    {isSeller && (
+                      <DropdownItem
+                        icon="ri-store-2-line"
+                        label="Seller Dashboard"
+                        onClick={() => navigate("/seller/dashboard")}
+                      />
+                    )}
+
+                    <DropdownMenuSeparator className="bg-zinc-100 dark:bg-white/[0.07] my-1" />
+
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm cursor-pointer text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-200 focus:outline-none"
+                    >
+                      <i className="ri-logout-box-r-line text-base" />
+                      <span className="font-medium">Logout</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
               <Link
                 to="/auth/user/login"
-                className="transition-colors hover:text-[#C9A96E]"
+                className="flex items-center gap-1.5 h-9 px-4 rounded-full bg-[#e63b1f] text-white text-[11px] font-bold tracking-[0.1em] uppercase hover:bg-[#ff4f30] active:scale-95 transition-all duration-200 flex-shrink-0"
               >
                 Sign In
               </Link>
-
-              <Link
-                to="/auth/user/register"
-                className="transition-colors hover:text-[#C9A96E]"
-              >
-                Sign Up
-              </Link>
-            </>
-          )}
+            )}
+          </div>
         </div>
-      </nav>
+
+        {/* Mobile search — slides down below nav */}
+        <div
+          className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+            searchOpen
+              ? "max-h-16 opacity-100 border-t border-zinc-100 dark:border-white/[0.06]"
+              : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="px-4 py-2.5 relative">
+            <i className="ri-search-line absolute left-7 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 text-sm pointer-events-none z-10" />
+            <Input
+              ref={searchRef}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleSearch}
+              placeholder="Search products…"
+              className="pl-9 pr-4 h-9 w-full text-[13px] rounded-full bg-zinc-100 dark:bg-white/[0.06] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-[#e63b1f]/40 focus-visible:border-[#e63b1f]/40"
+            />
+          </div>
+        </div>
+      </header>
+
+      {/* ══════════════ MOBILE SIDEBAR ══════════════ */}
+      <div
+        className={`fixed inset-0 z-[60] md:hidden transition-all duration-300 ${
+          sidebarOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+      >
+        {/* Dimmed backdrop */}
+        <div
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+        />
+
+        {/* Sliding panel */}
+        <div
+          className={`absolute left-0 top-0 h-full w-[280px] bg-white dark:bg-[#0f0f0f] border-r border-zinc-200 dark:border-white/[0.07] flex flex-col transition-transform duration-300 ease-in-out ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {/* Sidebar header */}
+          <div className="flex items-center justify-between px-5 h-[58px] border-b border-zinc-100 dark:border-white/[0.07] flex-shrink-0">
+            <Link
+              to="/"
+              onClick={() => setSidebarOpen(false)}
+              style={{
+                fontFamily: "'Bebas Neue', 'Anton', sans-serif",
+                fontSize: "1.4rem",
+                letterSpacing: "0.05em",
+              }}
+            >
+              <span className="text-zinc-900 dark:text-white">OUT</span>
+              <span className="text-[#e63b1f]">FIQUE</span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(false)}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-zinc-400 hover:text-zinc-700 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-white/5 transition-all"
+            >
+              <i className="ri-close-line text-lg" />
+            </button>
+          </div>
+
+          {/* User info (logged in only) */}
+          {user && (
+            <div className="px-5 py-4 border-b border-zinc-100 dark:border-white/[0.07]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#e63b1f]/10 border border-[#e63b1f]/20 flex items-center justify-center flex-shrink-0">
+                  <i className="ri-user-3-line text-[#e63b1f] text-base" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[12px] font-semibold text-zinc-800 dark:text-white truncate">
+                    {user.email}
+                  </p>
+                  <span
+                    className={`inline-flex items-center gap-1 mt-0.5 text-[9px] font-bold tracking-[0.15em] uppercase px-1.5 py-0.5 rounded-full ${
+                      isSeller
+                        ? "bg-[#e63b1f]/10 text-[#e63b1f]"
+                        : "bg-zinc-100 dark:bg-white/8 text-zinc-500 dark:text-zinc-400"
+                    }`}
+                  >
+                    {isSeller ? (
+                      <>
+                        <i className="ri-store-2-line" /> Seller
+                      </>
+                    ) : (
+                      <>
+                        <i className="ri-user-line" /> Buyer
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Nav links */}
+          <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">
+            <SidebarSection label="Menu" />
+            <SidebarItem
+              icon="ri-home-4-line"
+              label="Home"
+              onClick={() => goTo("/")}
+            />
+
+            {user && (
+              <>
+                <SidebarItem
+                  icon="ri-user-3-line"
+                  label="Profile"
+                  onClick={() => goTo("/profile")}
+                />
+                <SidebarItem
+                  icon="ri-heart-3-line"
+                  label="Wishlist"
+                  onClick={() => goTo("/wishlist")}
+                />
+                <SidebarItem
+                  icon="ri-shopping-bag-3-line"
+                  label="Cart"
+                  onClick={() => navigate("/cart")}
+                />
+              </>
+            )}
+
+            {isSeller && (
+              <SidebarItem
+                icon="ri-store-2-line"
+                label="Seller Dashboard"
+                onClick={() => goTo("/seller/dashboard")}
+              />
+            )}
+
+            <div className="pt-3">
+              <SidebarSection label="Appearance" />
+              <SidebarThemeSwitcher />
+            </div>
+          </nav>
+
+          {/* Bottom auth button */}
+          <div className="px-4 py-4 border-t border-zinc-100 dark:border-white/[0.07] flex-shrink-0">
+            {user ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-red-500 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-all duration-200"
+              >
+                <i className="ri-logout-box-r-line text-base" />
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/auth/user/login"
+                onClick={() => setSidebarOpen(false)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold tracking-[0.1em] uppercase text-white bg-[#e63b1f] hover:bg-[#ff4f30] transition-all duration-200"
+              >
+                Sign In
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+// ─── Sidebar helpers ──────────────────────────────────────────────────────────
+const SidebarSection = ({ label }) => (
+  <p className="px-3 pb-1 pt-1 text-[10px] font-bold tracking-[0.22em] uppercase text-zinc-400 dark:text-zinc-600">
+    {label}
+  </p>
+);
+
+const SidebarItem = ({ icon, label, onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/5 hover:text-[#e63b1f] transition-all duration-200 text-left"
+  >
+    <i className={`${icon} text-base text-zinc-400 dark:text-zinc-500`} />
+    {label}
+  </button>
+);
+
+const SidebarThemeSwitcher = () => {
+  const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme.mode);
+
+  const options = [
+    { value: "light", label: "Light", icon: "ri-sun-fill" },
+    { value: "dark", label: "Dark", icon: "ri-moon-clear-fill" },
+    { value: "system", label: "System", icon: "ri-computer-fill" },
+  ];
+
+  return (
+    <div className="flex gap-1.5 px-3 pt-1 pb-2">
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          onClick={() => dispatch(setTheme(o.value))}
+          className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border text-[10px] font-semibold tracking-wide uppercase transition-all duration-200 ${
+            theme === o.value
+              ? "border-[#e63b1f]/50 bg-[#e63b1f]/10 text-[#e63b1f]"
+              : "border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/4 text-zinc-500 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-white/20"
+          }`}
+        >
+          <i className={`${o.icon} text-base`} />
+          {o.label}
+        </button>
+      ))}
     </div>
   );
 };
 
-export default Nav;
+export default Navbar;
