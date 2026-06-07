@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import configure from "../config/config.js";
 import users from "../models/user.models.js";
 import redis from "../services/redis.service.js";
@@ -12,61 +11,60 @@ import {
  */
 
 const userRegisterController = async (req, res) => {
-    const { email, contact, password, fullName, isSeller } = req.body;
+  const { email, contact, password, fullName, isSeller } = req.body;
 
-    const userExists = await users.findOne({
-      $or: [{ email }, { contact }],
+  const userExists = await users.findOne({
+    $or: [{ email }, { contact }],
+  });
+
+  if (userExists) {
+    return res.status(400).json({
+      message: "User with this email or contact already exists",
     });
+  }
 
-    if (userExists) {
-      return res.status(400).json({
-        message: "User with this email or contact already exists",
-      });
-    }
+  const user = await users.create({
+    email,
+    contact,
+    password,
+    fullName,
+    role: isSeller ? "seller" : "buyer",
+  });
 
-    const user = await users.create({
-      email,
-      contact,
-      password,
-      fullName,
-      role: isSeller ? "seller" : "buyer",
+  const accessToken = generateAccessToken(user._id);
+  const refreshToken = generateRefreshToken(user._id);
+
+  const createUser = await users
+    .findById(user._id)
+    .select("-password -otp -otpExpiry -refreshToken -mfaToken");
+  if (!createUser) {
+    return res.status(500).json({
+      success: false,
+      message: "User registration failed",
     });
+  }
 
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
 
-    const createUser = await users
-      .findById(user._id)
-      .select("-password -otp -otpExpiry -refreshToken -mfaToken");
-    if (!createUser) {
-      return res.status(500).json({
-        success: false,
-        message: "User registration failed",
-      });
-    }
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: configure.NODE_ENV === "production" ? true : false,
+    sameSite: "lax",
+    maxAge: 15 * 60 * 1000,
+  });
 
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: configure.NODE_ENV === "production" ? true : false,
+    sameSite: "lax",
+    maxAge: 15 * 24 * 60 * 60 * 1000,
+  });
 
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      secure: configure.NODE_ENV === "production" ? true : false,
-      sameSite: "lax",
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: configure.NODE_ENV === "production" ? true : false,
-      sameSite: "lax",
-      maxAge: 15 * 24 * 60 * 60 * 1000,
-    });
-
-    return res.status(201).json({
-      message: "User registered successfully",
-      user: createUser,
-    });
-
+  return res.status(201).json({
+    message: "User registered successfully",
+    user: createUser,
+  });
 };
 
 /**
@@ -212,28 +210,21 @@ const getMeController = async (req, res) => {
 const logoutController = async (req, res) => {
   try {
     const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
 
-    if (!accessToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Access token not found",
-      });
+    if (accessToken) {
+      await redis.set(accessToken, "blacklisted", "EX", 15 * 60);
     }
 
-    const decodeAccessToken = jwt.decode(accessToken);
-
-    if (decodeAccessToken) {
-      const expiresIn = decodeAccessToken.exp - Math.floor(Date.now() / 1000);
-      await redis.sadd(`blacklisted:${decodeAccessToken.userid}`, accessToken);
-      await redis.expire(`blacklisted:${decodeAccessToken.userid}`, expiresIn);
+    if (refreshToken) {
+      await redis.set(refreshToken, "blacklisted", "EX", 15 * 24 * 60 * 60);
     }
 
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-
-    return res.status(200).json({
+    return res.json({
       success: true,
-      message: "User logged out successfully",
+      message: "Logged out successfully",
     });
   } catch (error) {
     return res.status(500).json({

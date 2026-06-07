@@ -39,7 +39,7 @@ export const getProductById = async (productId) => {
 export const searchProducts = async (search) => {
   try {
     const response = await productApiInstance.get(`/product/search`, {
-     params: {search}
+     params: {search, page: 1, limit: 10}
    });
 return response.data
   } catch (error) {
