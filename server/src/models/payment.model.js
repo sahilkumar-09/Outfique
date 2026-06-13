@@ -21,17 +21,10 @@ const paymentSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    order: [
-        {
-            title: String,
-            productId: mongoose.Schema.Types.ObjectId,
-            variantId: mongoose.Schema.Types.ObjectId,
-            quantity: Number,
-            productImages: [{ url: String }],
-            price: priceSchema,
-            description: String
-        }
-    ]
+    order: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "order",
+    }
 },{timestamps: true})
 
 const payments = mongoose.model("payment", paymentSchema)
