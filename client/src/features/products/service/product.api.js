@@ -2,7 +2,13 @@ import axios from "axios";
 
 const productApiInstance = axios.create({
   baseURL: "/api/products",
+  withCredentials: true
 });
+
+const categoryApiInstance = axios.create({
+  baseURL: "/api/category",
+  withCredentials: true
+})
 
 export const createProducts = async (formData) => {
   try {
@@ -60,5 +66,10 @@ export const addProductVariant = async (productId, newProductVariant) => {
 
   const response = await productApiInstance.post(`/${productId}/variants`, formData)
 
+  return response.data
+}
+
+export const getAllCategory = async () => {
+  const response = await categoryApiInstance.get("/")
   return response.data
 }

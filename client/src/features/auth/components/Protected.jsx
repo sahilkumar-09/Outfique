@@ -1,23 +1,21 @@
-import Spinner from '@/components/loader/Spiner'
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { Navigate } from 'react-router'
+import Spinner from "@/components/loader/Spiner";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router";
 
+const Protected = ({ children, role = "buyer" }) => {
+  const user = useSelector((state) => state.auth.user);
+  const loading = useSelector((state) => state.auth.loading);
 
-const Protected = ({children, role="buyer"}) => {
-  const user = useSelector(state => state.auth.user)
-  const loading = useSelector(state => state.auth.loading)
-
-  if (loading){
-    return <Spinner />
+  if (loading) {
+    return <Spinner />;
   }
   if (!user) {
-    return <Navigate to="/auth/user/login" />
-  } 
-  if (user.role !== role) {
-    return <Navigate to="/"/>
+    return <Navigate to="/auth/user/login" />;
   }
-  return children  
-}
+  if (user.role !== role) {
+    return <Navigate to="/" />;
+  }
+  return children;
+};
 
-export default Protected
+export default Protected;

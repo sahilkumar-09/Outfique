@@ -44,8 +44,9 @@ const getAllCategoryController = async (req, res) => {
 
 const getAllProductByCategorySlugController = async (req, res) => {
   try {
-     const slug = req.params.slug;
-     const category = await categories.findOne({slug});
+    const slug = req.params.slug;
+    const category = await categories.findOne({slug})
+    
      if (!category)
        return res
          .status(404)

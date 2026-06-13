@@ -10,6 +10,7 @@ export const useProfile = () => {
         dispatch(setProfileLoading(true))
         const data = await createProfileDetails(userid, payload)
         dispatch(setProfile(data.profile))
+        console.log(data.profile)
       } catch (error) {
         dispatch(setProfileError(error.message))
       } finally {
@@ -20,6 +21,7 @@ export const useProfile = () => {
     const handleGetProfileDetails = async () => {
         try {
           const profileData = await getProfileDetails()
+          dispatch(setProfile(profileData.profile))
           return profileData.profile
         } catch (error) {
           dispatch(clearProfile(error.message))
