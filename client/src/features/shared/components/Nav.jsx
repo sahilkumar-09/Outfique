@@ -145,7 +145,7 @@ const Navbar = () => {
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');`}</style>
 
       {/* ══════════════ NAVBAR ══════════════ */}
-      <header className="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-white/[0.07] bg-white dark:bg-[#0d0d0d] transition-colors duration-300">
+      <header className="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-white/[0.07] bg-white/70 dark:bg-[#0d0d0d]/70 backdrop-blur-md transition-colors duration-300">
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 h-[58px] flex items-center gap-3">
           {/* Mobile hamburger */}
           <button

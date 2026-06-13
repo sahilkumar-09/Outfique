@@ -7,6 +7,7 @@ import {
   getProductByIdController,
   addProductVariantController,
   getSearchController,
+  deleteController
 } from "../controllers/product.controller.js";
 import multer from "multer"
 import { createProductValidator } from "../validators/product.validator.js"
@@ -61,5 +62,11 @@ router.post(
   upload.array("productImages", 7),
   addProductVariantController,
 );
+
+/**
+ * @DELETE product by seller
+ */
+
+router.delete("/:productId", sellerMiddleware, deleteController)
 
 export default router

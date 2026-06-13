@@ -271,6 +271,44 @@ const getSearchController = async (req, res) => {
   }
 };
 
+/**
+ * @delete product by the seller
+ */
+
+const deleteController = async (req, res) => {
+  try {
+    const {productId} = req.params    
+    const product = await products.findById(productId)
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found"
+      })
+    }
+
+    if (!product.seller.equals(req.user._id)) {
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden, You can only delete your own product"
+      })
+    }
+
+    await products.findByIdAndDelete(productId)
+
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully"
+    })
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message
+    })
+  }
+}
+
 export {
   addProductVariantController,
   createProductController,
@@ -278,4 +316,5 @@ export {
   getAllSellerProductsController,
   getProductByIdController,
   getSearchController,
+  deleteController
 };
