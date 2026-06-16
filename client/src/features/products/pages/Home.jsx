@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useProduct } from '../hooks/useProduct';
 import Category from '../components/Category';
+import CategoryCarousel from '../components/CategoryCarousel';
+import Product from '../components/Product';
 
 const Home = () => {
 
@@ -18,8 +20,10 @@ const Home = () => {
   }, [])
   
   return (
-    <div>
+    <div className='flex flex-col gap-5'>
       <Category />
+      <CategoryCarousel />
+      <Product />
     </div>
   )
 }

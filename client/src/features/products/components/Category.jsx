@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useProduct } from "../hooks/useProduct";
 
 const Category = () => {
   const { handleGetAllCategory } = useProduct();
 
   const [categoryData, setCategoryData] = useState([]);
+  const [activeId, setActiveId] = useState(null);
+  const itemRefs = useRef({});
 
   const fetchCategoryData = async () => {
     try {
       const res = await handleGetAllCategory();
       setCategoryData(res);
+      if (res?.length) setActiveId(res[0]._id);
     } catch (err) {
       console.error("Error fetching categories:", err);
     }
@@ -19,16 +22,37 @@ const Category = () => {
     fetchCategoryData();
   }, []);
 
+
+
+
+  if (!categoryData.length) return null;
+
   return (
-    <div className="flex gap-3 overflow-x-auto whitespace-nowrap px-4 py-3 scrollbar-hide ">
-      {categoryData.map((category) => (
-        <button
-          key={category._id}
-          className="flex-shrink-0 px-4 py-2 rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 cursor-pointer text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
-        >
-          {category.name}
-        </button>
-      ))}
+    <div className="px-4 py-3 flex  justify-center">
+      <div className="overflow-x-auto scrollbar-hide">
+        {categoryData.map((cat) => {
+          const isActive = activeId === cat._id;
+
+          return (
+            <a
+              key={cat._id}
+              ref={(el) => (itemRefs.current[cat._id] = el)}
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveId(cat._id);
+              }}
+              className={`relative z-10 px-6 py-3 text-sm sm:text-base font-medium whitespace-nowrap rounded-full transition-colors duration-200 ${
+                isActive
+                  ? "text-red-600 dark:text-red-400"
+                  : "text-zinc-900 dark:text-zinc-100"
+              }`}
+            >
+              {cat.name}
+            </a>
+          );
+        })}
+      </div>
     </div>
   );
 };
