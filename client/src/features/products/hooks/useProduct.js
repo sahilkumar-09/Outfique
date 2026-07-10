@@ -7,7 +7,8 @@ import {
   addProductVariant,
   searchProducts,
   createCategory,
-  getAllCategory
+  getAllCategory,
+  getProductBySlug
 } from "../service/product.api";
 import { setAllProducts, setCategory, setSearchResult, setSellerProducts } from "../state/product.slice";
 
@@ -81,6 +82,12 @@ export const useProduct = () => {
     dispatch(setCategory(data.category));
     return data.category
   }
+
+  const handleGetProductBySlug = async (slug) => {
+    const data = await getProductBySlug(slug)
+    dispatch(setAllProducts(data.products));
+    return data.products
+  }
   
   return {
     handleCreateProducts,
@@ -90,6 +97,7 @@ export const useProduct = () => {
     handleAddProductVariants,
     handleSearchProducts,
     handleCreateCategory,
-    handleGetAllCategory
+    handleGetAllCategory,
+    handleGetProductBySlug,
   };
 };

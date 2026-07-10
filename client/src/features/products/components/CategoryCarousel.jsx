@@ -1,13 +1,7 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useProduct } from "../hooks/useProduct";
-
-const fmtPrice = (amount, currency = "INR") =>
-  new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(amount);
 
 const CategoryCarousel = () => {
   const { handleGetAllCategory } = useProduct();
@@ -15,175 +9,196 @@ const CategoryCarousel = () => {
   const [categoryData, setCategoryData] = useState([]);
   const [activeIdx, setActiveIdx] = useState(0);
 
-  const trackRef = useRef(null);
-  const cardRefs = useRef([]);
   const intervalRef = useRef(null);
+  const isAnimating = useRef(false);
 
-  const fetchCategoryData = async () => {
-    try {
-      const res = await handleGetAllCategory();
-      setCategoryData(res || []);
-    } catch (err) {
-      console.error("Error fetching categories:", err);
-    }
-  };
-
+  // ---------------- Fetch ----------------
   useEffect(() => {
+    const fetchCategoryData = async () => {
+      try {
+        const res = await handleGetAllCategory();
+        setCategoryData(res || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
     fetchCategoryData();
   }, []);
 
-  // Detect active card while scrolling
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track || !categoryData.length) return;
+  const total = categoryData.length;
 
-    const handleScroll = () => {
-      const trackRect = track.getBoundingClientRect();
-      const center = trackRect.left + trackRect.width / 2;
-
-      let closest = 0;
-      let minDistance = Infinity;
-
-      cardRefs.current.forEach((card, index) => {
-        if (!card) return;
-
-        const rect = card.getBoundingClientRect();
-        const cardCenter = rect.left + rect.width / 2;
-        const distance = Math.abs(cardCenter - center);
-
-        if (distance < minDistance) {
-          minDistance = distance;
-          closest = index;
-        }
-      });
-
-      setActiveIdx(closest);
-    };
-
-    track.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      track.removeEventListener("scroll", handleScroll);
-    };
-  }, [categoryData]);
-
-  const scrollToIdx = (index) => {
-    cardRefs.current[index]?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
-
-    setActiveIdx(index);
+  // ---------------- Navigation ----------------
+  const go = (dir) => {
+    if (isAnimating.current || total <= 1) return;
+    isAnimating.current = true;
+    setActiveIdx((prev) => (prev + dir + total) % total);
+    setTimeout(() => (isAnimating.current = false), 500);
   };
 
-  // Auto-scroll
+  // ---------------- Auto Scroll ----------------
   useEffect(() => {
-    if (!categoryData.length) return;
-
-    intervalRef.current = setInterval(() => {
-      setActiveIdx((prev) => {
-        const next = (prev + 1) % categoryData.length;
-
-        cardRefs.current[next]?.scrollIntoView({
-          behavior: "smooth",
-          inline: "center",
-          block: "nearest",
-        });
-
-        return next;
-      });
-    }, 4000);
-
+    if (!total) return;
+    intervalRef.current = setInterval(() => go(1), 3000);
     return () => clearInterval(intervalRef.current);
-  }, [categoryData]);
+  }, [total]);
 
-  if (!categoryData.length) return null;
+  const pauseAuto = () => clearInterval(intervalRef.current);
+  const resumeAuto = () => {
+    clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => go(1), 3000);
+  };
+
+  if (!total) return null;
+
+  const getCard = (offset) =>
+    categoryData[(activeIdx + offset + total) % total];
+
+  const slots = [
+    {
+      offset: -2,
+      width: "w-[70px] md:w-[90px]",
+      height: "h-[180px] md:h-[230px]",
+      opacity: 0.35,
+      scale: 0.8,
+      blur: true,
+      z: 1,
+    },
+    {
+      offset: -1,
+      width: "w-[140px] md:w-[180px]",
+      height: "h-[300px] md:h-[380px]",
+      opacity: 0.7,
+      scale: 0.92,
+      blur: false,
+      z: 2,
+    },
+    {
+      offset: 0,
+      width: "w-[320px] md:w-[480px] lg:w-[620px]",
+      height: "h-[340px] md:h-[420px] lg:h-[500px]",
+      opacity: 1,
+      scale: 1,
+      blur: false,
+      z: 5,
+    },
+    {
+      offset: 1,
+      width: "w-[150px] md:w-[150px]",
+      height: "h-[360px] md:h-[340px]",
+      opacity: 0.7,
+      scale: 0.92,
+      blur: false,
+      z: 2,
+    },
+    {
+      offset: 2,
+      width: "w-[70px] md:w-[90px]",
+      height: "h-[180px] md:h-[230px]",
+      opacity: 0.35,
+      scale: 0.8,
+      blur: true,
+      z: 1,
+    },
+  ];
 
   return (
-    <div className="w-full">
-      {/* Carousel */}
-      <div
-        ref={trackRef}
-        className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide scroll-smooth px-4"
-        style={{
-          scrollBehavior: "smooth",
-          WebkitOverflowScrolling: "touch",
-        }}
-      >
-        {categoryData.map((cat, index) => (
-          <motion.button
-            key={cat._id}
-            ref={(el) => (cardRefs.current[index] = el)}
-            onClick={() => scrollToIdx(index)}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.5,
-              ease: "easeOut",
-              delay: index * 0.08,
-            }}
-            whileHover={{
-              scale: 1.03,
-            }}
-            whileTap={{
-              scale: 0.98,
-            }}
-            className="relative shrink-0 snap-center w-[80%] sm:w-[50%] lg:w-[32%] aspect-[3/4] overflow-hidden rounded-2xl text-left"
-          >
-            {/* Image */}
-            <img
-              src={cat.image?.url}
-              alt={cat.name}
-              draggable={false}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+    <div
+      className="w-full py-10 select-none overflow-hidden"
+      onMouseEnter={pauseAuto}
+      onMouseLeave={resumeAuto}
+    >
+      {/* ── Carousel + Arrows ── */}
+      <div className="relative flex justify-center items-center gap-4 md:gap-6">
+        {/* ── Left Arrow ── */}
+        <button
+          onClick={() => go(-1)}
+          aria-label="Previous"
+          className="absolute left-4 md:left-8 z-20 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 dark:bg-stone-800/90 text-stone-800 dark:text-white shadow-lg hover:scale-110 active:scale-95 transition-transform backdrop-blur-sm"
+        >
+          <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+        </button>
 
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        {/* ── Cards ── */}
+        {slots.map((slot) => {
+          const cat = getCard(slot.offset);
+          const isCenter = slot.offset === 0;
+          const isLeft = slot.offset < 0;
+          const isRight = slot.offset > 0;
 
-            {/* Content */}
+          return (
             <motion.div
-              className="absolute bottom-0 left-0 right-0 p-5 sm:p-6"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.6,
-                delay: 0.2,
+              key={`${cat._id}-${slot.offset}`}
+              layout
+              onClick={() => {
+                if (isLeft) go(-1);
+                if (isRight) go(1);
               }}
+              animate={{ opacity: slot.opacity, scale: slot.scale }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              style={{
+                zIndex: slot.z,
+                filter: slot.blur ? "blur(2px)" : "none",
+              }}
+              className={`
+                ${slot.width} ${slot.height}
+                relative overflow-hidden rounded-[40px] shrink-0
+                ${!isCenter ? "cursor-pointer" : ""}
+              `}
             >
-              <h3 className="text-white text-3xl sm:text-4xl font-extrabold uppercase tracking-tight leading-none mb-3">
-                {cat.name}
-              </h3>
+              <img
+                src={cat.image?.url}
+                alt={cat.name}
+                draggable={false}
+                className="w-full h-full object-cover"
+              />
 
-              {cat.startingPrice && (
-                <span className="inline-block rounded-full bg-white px-4 py-2 text-xs sm:text-sm font-semibold text-stone-900">
-                  Starting at {fmtPrice(cat.startingPrice)}
-                </span>
+              <div
+                className={`absolute inset-0 ${isCenter ? "bg-gradient-to-t from-black/70 via-black/10 to-transparent" : "bg-black/25"}`}
+              />
+
+              {isCenter && (
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={cat._id}
+                    initial={{ opacity: 0, y: 25 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="absolute bottom-0 left-0 right-0 p-8"
+                  >
+                    <h2 className="text-white text-3xl md:text-5xl font-extrabold uppercase tracking-wider">
+                      {cat.name}
+                    </h2>
+                  </motion.div>
+                </AnimatePresence>
               )}
             </motion.div>
-          </motion.button>
-        ))}
+          );
+        })}
+
+        {/* ── Right Arrow ── */}
+        <button
+          onClick={() => go(1)}
+          aria-label="Next"
+          className="absolute right-4 md:right-8 z-20 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 dark:bg-stone-800/90 text-stone-800 dark:text-white shadow-lg hover:scale-110 active:scale-95 transition-transform backdrop-blur-sm"
+        >
+          <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+        </button>
       </div>
 
-      {/* Dots */}
-      <div className="mt-5 flex justify-center gap-2">
-        {categoryData.map((cat, index) => (
+      {/* ── Dots ── */}
+      <div className="flex justify-center mt-8 gap-2">
+        {categoryData.map((item, index) => (
           <motion.button
-            key={cat._id}
-            onClick={() => scrollToIdx(index)}
-            aria-label={`Go to ${cat.name}`}
-            animate={{
-              width: index === activeIdx ? 24 : 8,
-            }}
-            transition={{
-              duration: 0.3,
-            }}
+            key={item._id}
+            type="button"
+            onClick={() => setActiveIdx(index)}
+            animate={{ width: index === activeIdx ? 28 : 8 }}
+            transition={{ duration: 0.3 }}
             className={`h-2 rounded-full ${
               index === activeIdx
-                ? "bg-stone-900 dark:bg-white"
-                : "bg-stone-300 dark:bg-stone-600"
+                ? "bg-black dark:bg-white"
+                : "bg-gray-300 dark:bg-gray-600"
             }`}
           />
         ))}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useProduct } from "../hooks/useProduct";
+import { Link, useNavigate } from "react-router";
 
 const Category = () => {
   const { handleGetAllCategory } = useProduct();
@@ -18,12 +19,11 @@ const Category = () => {
     }
   };
 
+  const navigate = useNavigate()
+
   useEffect(() => {
     fetchCategoryData();
   }, []);
-
-
-
 
   if (!categoryData.length) return null;
 
@@ -34,13 +34,14 @@ const Category = () => {
           const isActive = activeId === cat._id;
 
           return (
-            <a
+            <Link
               key={cat._id}
               ref={(el) => (itemRefs.current[cat._id] = el)}
               href="#"
               onClick={(e) => {
                 e.preventDefault();
                 setActiveId(cat._id);
+                navigate(`/${cat.slug}`)
               }}
               className={`relative z-10 px-6 py-3 text-sm sm:text-base font-medium whitespace-nowrap rounded-full transition-colors duration-200 ${
                 isActive
@@ -49,7 +50,7 @@ const Category = () => {
               }`}
             >
               {cat.name}
-            </a>
+            </Link>
           );
         })}
       </div>

@@ -12,12 +12,12 @@ const verifyHelper = async (req, res) => {
     }
     try {
       const decoded = jwt.verify(accessToken, configure.ACCESS_TOKEN_SECRET)
-      const user = await user.findById(decoded.userid)
+      const user = await users.findById(decoded.userid)
       if (user) {
         return user
       }
     } catch (error) {
-      
+      throw new Error("Access token expired")
     }
   }
 

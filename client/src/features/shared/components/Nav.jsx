@@ -71,14 +71,20 @@ const ThemeToggle = () => {
 };
 
 // ─── Icon Button ──────────────────────────────────────────────────────────────
-const NavIconBtn = ({ icon, label, onClick }) => (
+const NavIconBtn = ({ icon, label, onClick, count = 0 }) => (
   <button
     type="button"
     aria-label={label}
     onClick={onClick}
-    className="cursor-pointer flex items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-600 dark:text-zinc-300 transition-all duration-200 hover:border-[#e63b1f]/50 hover:text-[#e63b1f] focus:outline-none active:scale-95"
+    className="relative cursor-pointer flex items-center justify-center w-9 h-9 rounded-full border border-zinc-200 dark:border-white/10 bg-zinc-50 dark:bg-white/5 text-zinc-600 dark:text-zinc-300 transition-all duration-200 hover:border-[#e63b1f]/50 hover:text-[#e63b1f] focus:outline-none active:scale-95"
   >
     <i className={`${icon} text-[15px]`} />
+
+    {
+      count > 0 && (
+        <span className="absolute -top-2 -right-1  w-4 h-4 rounded-full bg-[#e63b1f] text-white text-[10px] font-bold flex items-center justify-center">{ count > 99 ? "99+" : count }</span>
+      )
+    }
   </button>
 );
 
@@ -100,6 +106,9 @@ const Navbar = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const searchRef = useRef(null);
+
+  const wishlistCount = useSelector((state) => state.wishlist.items.length || 0)
+  const cartCount = useSelector(state => state.cart.items.length || 0)
 
   // ⚠️ Replace with your actual Redux auth selector
   const user = useSelector((state) => state.auth.user); // { email, role } | null
@@ -217,6 +226,7 @@ const Navbar = () => {
                   <NavIconBtn
                     icon="ri-heart-3-line"
                     label="Wishlist"
+                    count={wishlistCount}
                     onClick={() => navigate("/wishlist")}
                   />
                 </div>
@@ -224,6 +234,7 @@ const Navbar = () => {
                   <NavIconBtn
                     icon="ri-shopping-bag-3-line"
                     label="Cart"
+                    count={cartCount}
                     onClick={() => navigate("/cart")}
                   />
                 </div>
@@ -432,12 +443,12 @@ const Navbar = () => {
                 />
                 <SidebarItem
                   icon="ri-heart-3-line"
-                  label="Wishlist"
+                  label={`Wishlist (${wishlistCount})`}
                   onClick={() => goTo("/wishlist")}
                 />
                 <SidebarItem
                   icon="ri-shopping-bag-3-line"
-                  label="Cart"
+                  label={`Cart (${cartCount})`}
                   onClick={() => navigate("/cart")}
                 />
               </>

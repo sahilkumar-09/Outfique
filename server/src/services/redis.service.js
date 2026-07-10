@@ -1,18 +1,16 @@
-import Redis from "ioredis";
+import { Redis } from "@upstash/redis";
 import configure from "../config/config.js";
 
 const redis = new Redis({
-  port: configure.REDIS_PORT,
-  host: configure.REDIS_HOST,
-  password: configure.REDIS_PASSWORD,
+  url: configure.UPSTASH_REDIS_REST_URL,
+  token: configure.UPSTASH_REDIS_REST_TOKEN
 });
 
-redis.on("connect", () => {
-  console.log("Redis connected");
-});
-
-redis.on("error", (error) => {
-  console.log("Redis error: ", error);
-});
+try {
+  await redis.set("test", "Redis connection successful!");
+  console.log("Redis connection successful!");
+} catch (error) {
+  console.log("Redis connection error: ", error);
+}
 
 export default redis;

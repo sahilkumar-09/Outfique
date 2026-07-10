@@ -1,21 +1,23 @@
-import {createBrowserRouter} from "react-router"
-import Register from "../features/auth/pages/Register"
-import Login from "../features/auth/pages/Login"
-import CreateProduct from "../features/products/pages/CreateProduct"
-import Dashboard from "../features/products/pages/Dashboard"
-import Protected from "../features/auth/components/Protected"
-import Home from "../features/products/pages/Home"
-import ProductDetail from "../features/products/pages/ProductDetail"
-import SellerProductDetail from "../features/products/pages/SellerProductDetail"
-import Cart from "../features/cart/pages/Cart"
-import AppLayout from "./AppLayout"
-import OrderSuccess from "../features/cart/pages/OrderSuccess"
-import Orders from "../features/cart/pages/Orders"
-import OrderDetails from "../features/cart/pages/OrderDetails"
-import NotFound from "./NotFound"
-import CreateProfile from "../features/profile/page/CreateProfile"
-import Profile from "../features/profile/page/Profile"
-import Wishlist from "../features/wishlist/pages/Wishlist"
+import Category from "@/features/products/components/Category";
+import CategoryWiseProduct from "@/features/products/pages/CategoryWiseProduct";
+import { createBrowserRouter } from "react-router";
+import Protected from "../features/auth/components/Protected";
+import Login from "../features/auth/pages/Login";
+import Register from "../features/auth/pages/Register";
+import Cart from "../features/cart/pages/Cart";
+import OrderDetails from "../features/cart/pages/OrderDetails";
+import OrderSuccess from "../features/cart/pages/OrderSuccess";
+import Orders from "../features/cart/pages/Orders";
+import CreateProduct from "../features/products/pages/CreateProduct";
+import Dashboard from "../features/products/pages/Dashboard";
+import Home from "../features/products/pages/Home";
+import ProductDetail from "../features/products/pages/ProductDetail";
+import SellerProductDetail from "../features/products/pages/SellerProductDetail";
+import CreateProfile from "../features/profile/page/CreateProfile";
+import Profile from "../features/profile/page/Profile";
+import Wishlist from "../features/wishlist/pages/Wishlist";
+import AppLayout from "./AppLayout";
+import NotFound from "./NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -63,7 +65,7 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        path: "/product/:productId",
+        path: "/product/:slug/:productSlug",
         element: <ProductDetail />,
       },
       {
@@ -101,21 +103,41 @@ export const router = createBrowserRouter([
       {
         path: "/user/profile",
         element: (
-          <Protected><Profile/></Protected>
-        )
+          <Protected>
+            <Profile />
+          </Protected>
+        ),
       },
       {
         path: "/create-profile/:userid",
-        element: (<Protected><CreateProfile/></Protected>)
+        element: (
+          <Protected>
+            <CreateProfile />
+          </Protected>
+        ),
       },
       {
-        path: "/user/style-list",
-        element: <Protected><Wishlist/></Protected>
-      }
+        path: "/wishlist",
+        element: (
+          <Protected>
+            <Wishlist />
+          </Protected>
+        ),
+      },
+      {
+        path: "/:slug",
+        element: (
+          <>
+            <Protected>
+              <CategoryWiseProduct />
+            </Protected>
+          </>
+        ),
+      },
     ],
   },
   {
     path: "*",
-    element: <NotFound/>,
-  }
+    element: <NotFound />,
+  },
 ]);

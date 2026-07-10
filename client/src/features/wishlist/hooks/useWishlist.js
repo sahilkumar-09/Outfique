@@ -17,7 +17,8 @@ export const useWishlist = () => {
     const handleGetWishlist = async () => {
         try {
             const items = await getWishlist()
-                 dispatch(setItems(items.wishlist.items));
+            dispatch(setItems(items.wishlist.items));
+            return items.wishlist.items
         } catch (error) {
             throw error.message
         }

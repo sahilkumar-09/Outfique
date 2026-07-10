@@ -60,16 +60,16 @@ if (!process.env.RAZORPAY_KEY_SECRET) {
   throw new Error("Razorpay secret id is not defined in environment variable");
 }
 
-if (!process.env.REDIS_HOST) {
-  throw new Error("Redis host is not defined in environment variable")
+if (!process.env.UPSTASH_REDIS_REST_URL) {
+  throw new Error(
+    "UPSTASH_REDIS_REST_URL is not defined in environment variable",
+  );
 }
 
-if (!process.env.REDIS_PORT) {
-  throw new Error("Redis port is not defined in environment variable")
-}
-
-if (!process.env.REDIS_PASSWORD) {
-  throw new Error("Redis password is not defined in environment variable")
+if (!process.env.UPSTASH_REDIS_REST_TOKEN) {
+  throw new Error(
+    "UPSTASH_REDIS_REST_TOKEN is not defined in environment variable",
+  );
 }
 
 const configure = {
@@ -91,9 +91,8 @@ const configure = {
   IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT,
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
   RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
-  REDIS_HOST: process.env.REDIS_HOST,
-  REDIS_PORT: process.env.REDIS_PORT,
-  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+  UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+  UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
 };
 
 export default configure
