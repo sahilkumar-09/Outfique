@@ -7,7 +7,7 @@ const CategoryWiseProduct = () => {
     const { handleGetProductBySlug } = useProduct()
     const [productData, setProductData] = useState([])
     const { slug } = useParams()
-    console.log(slug)
+    
     const fetchProductData = async () => {
         const res = await handleGetProductBySlug(slug)
         setProductData(res)
@@ -25,8 +25,6 @@ const CategoryWiseProduct = () => {
             </div>
         )
     }
-
-    console.log(productData)
 
   return (
       <div className='flex flex-col gap-5 px-4'>

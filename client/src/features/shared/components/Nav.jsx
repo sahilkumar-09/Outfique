@@ -2,7 +2,6 @@ import { setTheme } from "@/features/theme/state/theme.slice";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import SearchAutocomplete from "./Searchautocomplete ";
 
 // ─── Theme Toggle ─────────────────────────────────────────────────────────────
 const ThemeToggle = () => {
@@ -80,11 +79,11 @@ const NavIconBtn = ({ icon, label, onClick, count = 0 }) => (
   >
     <i className={`${icon} text-[15px]`} />
 
-    {
-      count > 0 && (
-        <span className="absolute -top-2 -right-1  w-4 h-4 rounded-full bg-[#e63b1f] text-white text-[10px] font-bold flex items-center justify-center">{ count > 99 ? "99+" : count }</span>
-      )
-    }
+    {count > 0 && (
+      <span className="absolute -top-2 -right-1  w-4 h-4 rounded-full bg-[#e63b1f] text-white text-[10px] font-bold flex items-center justify-center">
+        {count > 99 ? "99+" : count}
+      </span>
+    )}
   </button>
 );
 
@@ -102,13 +101,14 @@ const DropdownItem = ({ icon, label, onClick }) => (
 // ─── Main Navbar ──────────────────────────────────────────────────────────────
 const Navbar = () => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const searchRef = useRef(null);
 
-  const wishlistCount = useSelector((state) => state.wishlist.items.length || 0)
-  const cartCount = useSelector(state => state.cart.items.length || 0)
+  const wishlistCount = useSelector(
+    (state) => state.wishlist.items.length || 0,
+  );
+  const cartCount = useSelector((state) => state.cart.items.length || 0);
 
   // ⚠️ Replace with your actual Redux auth selector
   const user = useSelector((state) => state.auth.user); // { email, role } | null
@@ -130,13 +130,6 @@ const Navbar = () => {
       document.body.style.overflow = "";
     };
   }, [sidebarOpen]);
-
-  const handleSearch = (e) => {
-    if (e.key === "Enter" && search.trim()) {
-      navigate(`/search?q=${encodeURIComponent(search.trim())}`);
-      setSearchOpen(false);
-    }
-  };
 
   const handleLogout = () => {
     // dispatch(logoutAction()) — add your logout dispatch here
@@ -191,15 +184,8 @@ const Navbar = () => {
           )}
 
           {/* Search bar — desktop */}
-          <div className="hidden md:flex flex-1 max-w-[420px] mx-auto relative">
-            <i className="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 text-sm pointer-events-none z-10" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={handleSearch}
-              placeholder="Search products…"
-              className="pl-9 pr-4 h-9 w-full text-[13px] rounded-full bg-zinc-100 dark:bg-white/[0.06] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-[#e63b1f]/40 focus-visible:border-[#e63b1f]/40 transition-all duration-200"
-            />
+          <div className="hidden md:flex flex-1 max-w-[420px] mx-auto">
+            <SearchAutocomplete />
           </div>
 
           {/* Right icon group */}
@@ -329,21 +315,16 @@ const Navbar = () => {
 
         {/* Mobile search — slides down below nav */}
         <div
-          className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+          className={`md:hidden transition-all duration-300 ease-in-out ${
             searchOpen
-              ? "max-h-16 opacity-100 border-t border-zinc-100 dark:border-white/[0.06]"
-              : "max-h-0 opacity-0"
+              ? "max-h-16 opacity-100 overflow-visible border-t border-zinc-100 dark:border-white/[0.06]"
+              : "max-h-0 opacity-0 overflow-hidden"
           }`}
         >
-          <div className="px-4 py-2.5 relative">
-            <i className="ri-search-line absolute left-7 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 text-sm pointer-events-none z-10" />
-            <Input
+          <div className="px-4 py-2.5">
+            <SearchAutocomplete
               ref={searchRef}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={handleSearch}
-              placeholder="Search products…"
-              className="pl-9 pr-4 h-9 w-full text-[13px] rounded-full bg-zinc-100 dark:bg-white/[0.06] border-zinc-200 dark:border-white/10 text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus-visible:ring-1 focus-visible:ring-[#e63b1f]/40 focus-visible:border-[#e63b1f]/40"
+              onNavigate={() => setSearchOpen(false)}
             />
           </div>
         </div>

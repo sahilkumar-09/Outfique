@@ -61,6 +61,7 @@ const getProfileDetailController = async (req, res) => {
   }
 };
 
+
 export {
     addProfileDetailController,
     getProfileDetailController

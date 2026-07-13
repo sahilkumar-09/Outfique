@@ -28,8 +28,10 @@ export const getSellerAllProducts = async () => {
   }
 };
 
-export const getAllProducts = async () => {
-  const response = await productApiInstance.get("/");
+export const getAllProducts = async (params = {}) => {
+  const response = await productApiInstance.get("/", {
+    params
+  });
   return response.data;
 };
 
@@ -42,10 +44,10 @@ export const getProductById = async (productId) => {
   }
 };
 
-export const searchProducts = async (search) => {
+export const searchProducts = async (search, page = 1, limit = 10) => {
   try {
     const response = await productApiInstance.get(`/product/search`, {
-     params: {search, page: 1, limit: 10}
+     params: {search, page, limit}
    });
 return response.data
   } catch (error) {

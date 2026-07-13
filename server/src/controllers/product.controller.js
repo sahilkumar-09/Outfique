@@ -121,18 +121,19 @@ const getAllProductsController = async (req, res) => {
   }
 
   if (sort === "latest") {
-    sortOptions.createAt = -1;
+    sortOptions.createdAt = -1;
   }
 
-  const totalProduct = await products.countDocuments(filter);
-
-  const product = await products
-    .find(filter)
-    .populate("category")
-    .populate("seller", "fillName")
-    .sort(sortOptions)
-    .skip(skip)
-    .limit(limit);
+  const [totalProduct, product] = await Promise.all([
+    products.countDocuments(filter),
+    products
+      .find(filter)
+      .populate("category")
+      .populate("seller", "fullName")
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit),
+  ]);
 
   return res.status(200).json({
     success: true,
@@ -249,7 +250,8 @@ const getSearchController = async (req, res) => {
     const product = await products
       .find(search ? { title: { $regex: search, $options: "i" } } : {})
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .populate("category");
 
     const total = await products.countDocuments(
       search ? { title: { $regex: search, $options: "i" } } : {},
@@ -309,39 +311,30 @@ const deleteController = async (req, res) => {
 };
 
 const getProductBySlugController = async (req, res) => {
-  
-    const { slug, productSlug } = req.params;
-    const { color, size } = req.query;
+  const { slug, productSlug } = req.params;
+  const { color, size } = req.query;
 
-    const product = await products
-      .findOne({ productSlug })
-      .populate("category");
+  const product = await products.findOne({ productSlug }).populate("category");
 
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
-
-    if (product.category.slug !== slug) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid category",
-      });
-    }
-
-    
-
- 
-
-    return res.status(200).json({
-      success: true,
-      message: "Product fetched",
-      product,
-     
+  if (!product) {
+    return res.status(404).json({
+      success: false,
+      message: "Product not found",
     });
-  
+  }
+
+  if (product.category.slug !== slug) {
+    return res.status(404).json({
+      success: false,
+      message: "Invalid category",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "Product fetched",
+    product,
+  });
 };
 
 export {

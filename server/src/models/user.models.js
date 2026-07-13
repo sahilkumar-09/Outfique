@@ -24,6 +24,12 @@ const userSchema = new Schema(
       },
       trim: true,
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpire: {
+      type: Date
+    },
     fullName: {
       type: String,
       required: [true, "Full name is required"],

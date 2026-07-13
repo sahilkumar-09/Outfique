@@ -1,15 +1,28 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router";
-import { useAuth } from "../hooks/useAuth";
-import ContinueWithGoogle from "../components/ContinueWithGoogle";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import ThemeToggle from "@/features/theme/components/ThemeToggle";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import ContinueWithGoogle from "../components/ContinueWithGoogle";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
 
-  const { handleLogin } = useAuth();
+  const { handleLogin, handleForgotPassword } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +40,14 @@ export default function Login() {
     setEmail("");
     setPassword("");
   };
+
+  const handlePassword =async (e) => {
+    e.preventDefault()
+    const data = await handleForgotPassword({ email: forgotEmail })
+    if (data?.success) {
+      navigate(`/reset/${data.resetToken}`)
+    }
+  }
   return (
     <div className="h-screen flex font-sans overflow-hidden bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 transition-colors duration-300">
       {/* ── LEFT PANEL ── */}
@@ -149,21 +170,21 @@ export default function Login() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="
-w-full
-mt-2
-bg-white dark:bg-[#1a1a1a]
-border border-zinc-300 dark:border-white/10
-rounded
-text-zinc-900 dark:text-white
-placeholder-zinc-400 dark:placeholder-white/20
-text-sm
-py-3 pl-9 pr-4
-focus:outline-none
-focus:border-[#e63b1f]/60
-focus:bg-zinc-50 dark:focus:bg-[#1e1e1e]
-transition-all duration-200
-mb-4
-"
+                      w-full
+                      mt-2
+                      bg-white dark:bg-[#1a1a1a]
+                      border border-zinc-300 dark:border-white/10
+                      rounded
+                      text-zinc-900 dark:text-white
+                      placeholder-zinc-400 dark:placeholder-white/20
+                      text-sm
+                      py-3 pl-9 pr-4
+                      focus:outline-none
+                      focus:border-[#e63b1f]/60
+                      focus:bg-zinc-50 dark:focus:bg-[#1e1e1e]
+                      transition-all duration-200
+                      mb-4
+                      "
                   />
                 </div>
               </div>
@@ -173,12 +194,50 @@ mb-4
                   <label className="text-zinc-600 dark:text-white/50 text-[11px] font-semibold tracking-[0.15em] uppercase">
                     Password
                   </label>
-                  <a
-                    href="#"
-                    className="text-[#e63b1f] text-[11px] font-semibold tracking-wider uppercase hover:text-[#ff4f30] transition-colors"
-                  >
-                    Forgot Password?
-                  </a>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button
+                        type="button"
+                        className="text-[11px] font-semibold uppercase tracking-wider text-[#e63b1f] hover:text-[#ff4f30] cursor-pointer"
+                      >
+                        Forgot Password?
+                      </button>
+                    </DialogTrigger>
+
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Forgot Password?</DialogTitle>
+
+                        <DialogDescription>
+                          Enter the email address associated with your account
+                          and we'll send a one-time verification code (OTP) to
+                          reset your password.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="forgot-email">Email Address</Label>
+
+                        <Input
+                          id="forgot-email"
+                          type="email"
+                          placeholder="you@example.com"
+                          value={forgotEmail}
+                          onChange={(e) => setForgotEmail(e.target.value)}
+                        />
+                      </div>
+
+                      <DialogFooter>
+                        <Button
+                          type="button"
+                          onClick={handlePassword}
+                          className="w-full bg-[#e63b1f] hover:bg-[#ff4f30] cursor-pointer"
+                        >
+                          Send OTP
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
                 <div className="relative">
                   <i className="ri-lock-line absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-white/20 text-base" />

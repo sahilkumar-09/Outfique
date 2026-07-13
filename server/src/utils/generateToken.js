@@ -11,3 +11,9 @@ export const generateRefreshToken = (userid) => {
 
     return refreshToken
 }
+
+export const generateResetToken = (userid) => {
+    const resetToken = jwt.sign({ userid }, configure.RESET_PASSWORD_TOKEN, { expiresIn: configure.RESET_PASSWORD_TOKEN_EXPIRES_IN })
+    
+    return  resetToken
+}

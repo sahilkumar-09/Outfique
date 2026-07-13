@@ -73,11 +73,11 @@ export const useProduct = () => {
     }
   }
 
-  const handleSearchProducts = async (search) => {
+  const handleSearchProducts = async (search, page=1) => {
     try {
-      const data = await searchProducts(search)
-      console.log(data.product)
-      dispatch(setSearchResult(data.product));
+      const data = await searchProducts(search, page)
+      dispatch(setSearchResult(data.products));
+      return data.products
     } catch (error) {
       throw error.message
     }

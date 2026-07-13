@@ -1,14 +1,23 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { useWishlist } from "@/features/wishlist/hooks/useWishlist";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
-  Heart,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Heart,
   Share2,
   Truck,
 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useParams } from "react-router";
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  TelegramIcon,
+  TelegramShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from "react-share";
 import { useProduct } from "../hooks/useProduct";
 
 // ---- known color name -> swatch hex (extend as needed) ----
@@ -66,6 +75,12 @@ const ProductDetail = () => {
     }
   }, [slug, productSlug]);
 
+  useEffect(() => {
+    document.title = product?.title
+      ? `Buy ${product.title} | YourStore`
+      : "Loading...";
+  }, [product]);
+
   if (loading) return <ProductDetailSkeleton />;
 
   if (error || !product) {
@@ -82,11 +97,14 @@ const ProductDetail = () => {
 function ProductDetailView({ product }) {
   const reduceMotion = useReducedMotion();
   const variants = product.variants || [];
-
+  const shareUrl = `${window.location.origin}/product/${product.category.slug}/${product.productSlug}`;
+  const shareTitle = product.title;
+  const [shareOpen, setShareOpen] = useState(false);
   const [activeVariantIdx, setActiveVariantIdx] = useState(0);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [activeSize, setActiveSize] = useState(null);
   const [wishlisted, setWishlisted] = useState(false);
+  const [addToCart, setAddToCart] = useState([]);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [careOpen, setCareOpen] = useState(false);
   const thumbColRef = useRef(null);
@@ -113,6 +131,20 @@ function ProductDetailView({ product }) {
     setActiveImageIdx((i) => (i === images.length - 1 ? 0 : i + 1));
 
   const sizes = activeVariant?.attributes?.size || [];
+
+  const { handleAddWishlist } = useWishlist();
+
+  const toggleWishList = async (productId, variantId) => {
+    try {
+      await handleAddWishlist(productId, variantId);
+      setWishlisted((prev) => ({
+        ...prev,
+        [productId]: !prev[productId],
+      }));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-stone-950 text-stone-900 dark:text-stone-100 transition-colors">
@@ -193,12 +225,54 @@ function ProductDetailView({ product }) {
               <span className="text-xs font-medium tracking-[0.15em] text-stone-500 dark:text-stone-400 uppercase">
                 New Arrival
               </span>
-              <button
-                aria-label="Share product"
-                className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition-colors"
-              >
-                <Share2 className="w-4 h-4" />
-              </button>
+
+              <div className="relative">
+                <button
+                  onClick={() => setShareOpen((prev) => !prev)}
+                  aria-label="Share product"
+                  className="text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition-colors"
+                >
+                  <Share2 className="w-4 h-4" />
+                </button>
+
+                {shareOpen && (
+                  <div className="absolute right-0 top-8 z-50 w-60 rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-xl p-4">
+                    <h3 className="mb-3 text-sm font-semibold text-stone-900 dark:text-white">
+                      Share Product
+                    </h3>
+
+                    <div className="flex items-center justify-between">
+                      <WhatsappShareButton
+                        url={window.location.href}
+                        title={product.title}
+                      >
+                        <WhatsappIcon size={42} round />
+                      </WhatsappShareButton>
+
+                      <FacebookShareButton url={window.location.href}>
+                        <FacebookIcon size={42} round />
+                      </FacebookShareButton>
+
+                      <TelegramShareButton
+                        url={window.location.href}
+                        title={product.title}
+                      >
+                        <TelegramIcon size={42} round />
+                      </TelegramShareButton>
+
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(window.location.href);
+                          setShareOpen(false);
+                        }}
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 transition"
+                      >
+                        🔗
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             <h1 className="mt-3 text-2xl sm:text-3xl font-semibold tracking-tight leading-tight">
@@ -282,6 +356,7 @@ function ProductDetailView({ product }) {
                 whileTap={reduceMotion ? {} : { scale: 0.98 }}
                 disabled={sizes.length > 0 && !activeSize}
                 className="flex-1 h-13 py-3.5 rounded-xl bg-stone-900 text-white dark:bg-white dark:text-stone-900 text-sm font-medium tracking-wide hover:bg-stone-800 dark:hover:bg-stone-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-900 dark:focus-visible:ring-white"
+                onClick={() => console.log("Hello world")}
               >
                 Add to Bag
               </motion.button>
@@ -294,6 +369,9 @@ function ProductDetailView({ product }) {
                 className="w-13 h-13 aspect-square rounded-xl border border-stone-200 dark:border-stone-800 flex items-center justify-center hover:border-stone-400 dark:hover:border-stone-600 transition-colors"
               >
                 <Heart
+                  onClick={() => {
+                    toggleWishList();
+                  }}
                   className={`w-4.5 h-4.5 transition-colors ${
                     wishlisted
                       ? "fill-rose-500 text-rose-500"

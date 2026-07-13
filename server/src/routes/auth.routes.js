@@ -6,6 +6,8 @@ import {
   googleSuccessController,
   getMeController,
   logoutController,
+  forgotPasswordController,
+  resetPasswordController,
 } from "../controllers/auth.controller.js";
 import passport from "passport";
 import configure from "../config/config.js"
@@ -52,5 +54,18 @@ router.get("/me", authMiddleware, getMeController)
  */
 
 router.post("/logout", authMiddleware, logoutController)
+
+/**
+ * Forgot password
+ * @POST method
+ */
+router.post("/forgot-password", forgotPasswordController)
+
+/**
+ * Reset password
+ * @POST method
+ */
+
+router.post("/reset-password/:resetToken", resetPasswordController)
 
 export default router

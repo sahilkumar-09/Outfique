@@ -18,6 +18,7 @@ import Profile from "../features/profile/page/Profile";
 import Wishlist from "../features/wishlist/pages/Wishlist";
 import AppLayout from "./AppLayout";
 import NotFound from "./NotFound";
+import ResetPassword from "@/features/auth/pages/ResetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
   {
     path: "/auth/user/login",
     element: <Login />,
+  },
+  {
+    path: "/reset/:resetToken",
+    element: <ResetPassword />
   },
   {
     element: <AppLayout />,

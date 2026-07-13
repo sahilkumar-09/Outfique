@@ -32,6 +32,10 @@ if (!process.env.REFRESH_TOKEN_EXPIRES_IN) {
   );
 }
 
+if (!process.env.GOOGLE_USER) {
+  throw new Error("Google user is not defined in environment variable");
+}
+
 if(!process.env.GOOGLE_CLIENT_ID){
   throw new Error("Google client id is not defined in environment variable")
 }
@@ -72,6 +76,14 @@ if (!process.env.UPSTASH_REDIS_REST_TOKEN) {
   );
 }
 
+if (!process.env.RESET_PASSWORD_TOKEN) {
+  throw new Error("Reset password token is not defined in environment variable")
+}
+
+if (!process.env.RESET_PASSWORD_TOKEN_EXPIRES_IN) {
+  throw new Error("RESET_PASSWORD_TOKEN_EXPIRES_IN is not defined in environment variable")
+}
+
 const configure = {
   PORT: process.env.PORT || 8000,
   MONGO_URI: process.env.MONGO_URI,
@@ -79,8 +91,8 @@ const configure = {
   ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN,
-  MFA_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
-  MFA_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN,
+  RESET_PASSWORD_TOKEN: process.env.RESET_PASSWORD_TOKEN_EXPIRES_IN,
+  RESET_PASSWORD_TOKEN_EXPIRES_IN: process.env.RESET_PASSWORD_TOKEN_EXPIRES_IN,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,

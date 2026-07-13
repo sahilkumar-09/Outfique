@@ -152,7 +152,10 @@ export const Product = () => {
       console.log(error.message)
     }
   }
-    
+
+  useEffect(() => {
+      document.title = "Men's Fashion | Premium Clothing & Accessories";
+    })
   
   return (
     <div className="mx-auto max-w-[1400px] px-3 py-6 sm:px-6 lg:px-12 transition-colors duration-300">
@@ -165,7 +168,6 @@ export const Product = () => {
                 product={product}
                 wishlisted={!!wishlist[product._id]}
                 onToggleWishlist={toggleWishlist}
-
               />
             ))}
       </div>
