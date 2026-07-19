@@ -386,9 +386,6 @@ function ProductDetailView({
                 }
                 className="flex-1 h-13 py-3.5 rounded-xl bg-stone-900 text-white dark:bg-white dark:text-stone-900 text-sm font-medium tracking-wide hover:bg-stone-800 dark:hover:bg-stone-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-900 dark:focus-visible:ring-white"
                 onClick={() => {
-                  console.log("productId:", product._id);
-                  console.log("variantId:", activeVariant?._id);
-                  console.log("size", activeSize)
                   moveToBag(product._id, activeVariant?._id, activeSize);
                 }}
               >

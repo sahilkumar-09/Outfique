@@ -45,8 +45,8 @@ export const useCart = () => {
     dispatch(deleteItems({ productId, variantId }));
   };
 
-  const handleAddToCartOrder = async ({shippingAddress}) => {
-    const order = await createCartOrder({shippingAddress});
+  const handleAddToCartOrder = async () => {
+    const order = await createCartOrder();
     return order;
   };
 

@@ -11,6 +11,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import SearchAutocomplete from "./Searchautocomplete ";
 
+// seller sub-nav — adjust paths to match your actual routes
+const SELLER_MORE_LINKS = [
+  { icon: "ri-archive-2-line", label: "Inventory", path: "/seller/inventory" },
+  { icon: "ri-line-chart-line", label: "Sales", path: "/seller/sales" },
+  { icon: "ri-file-list-3-line", label: "Orders", path: "/seller/orders" },
+  { icon: "ri-bar-chart-2-line", label: "Analytics", path: "/seller/analytics" },
+  { icon: "ri-group-line", label: "Customers", path: "/seller/customers" },
+  { icon: "ri-star-line", label: "Reviews", path: "/seller/reviews" },
+  { icon: "ri-bank-card-line", label: "Payments / Payouts", path: "/seller/payments" },
+  { icon: "ri-refund-2-line", label: "Returns & Refunds", path: "/seller/returns" },
+];
+
 // ─── Theme Toggle ─────────────────────────────────────────────────────────────
 const ThemeToggle = () => {
   const dispatch = useDispatch();
@@ -98,6 +110,38 @@ const DropdownItem = ({ icon, label, onClick }) => (
   </DropdownMenuItem>
 );
 
+// ─── Seller "More" dropdown (desktop) ──────────────────────────────────────────
+const SellerMoreMenu = ({ navigate }) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <button
+        type="button"
+        className="hidden md:flex items-center gap-1 text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-400 dark:text-zinc-500 hover:text-[#e63b1f] transition-colors duration-200 flex-shrink-0"
+      >
+        More
+        <i className="ri-arrow-down-s-line text-xs" />
+      </button>
+    </DropdownMenuTrigger>
+
+    <DropdownMenuContent
+      align="start"
+      className="w-56 rounded-xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#141414] shadow-xl p-1"
+    >
+      <div className="px-3 py-2 text-[10px] font-semibold tracking-widest uppercase text-zinc-400 dark:text-zinc-500">
+        Seller Tools
+      </div>
+      {SELLER_MORE_LINKS.map((item) => (
+        <DropdownItem
+          key={item.path}
+          icon={item.icon}
+          label={item.label}
+          onClick={() => navigate(item.path)}
+        />
+      ))}
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
+
 // ─── Main Navbar ──────────────────────────────────────────────────────────────
 const Navbar = () => {
   const navigate = useNavigate();
@@ -173,14 +217,17 @@ const Navbar = () => {
             <span className="text-[#e63b1f]">FIQUE</span>
           </Link>
 
-          {/* Seller dashboard link — desktop only */}
+          {/* Seller dashboard link + More menu — desktop only */}
           {isSeller && (
-            <Link
-              to="/seller/dashboard"
-              className="hidden md:block text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-400 dark:text-zinc-500 hover:text-[#e63b1f] transition-colors duration-200 ml-1 flex-shrink-0"
-            >
-              Dashboard
-            </Link>
+            <div className="hidden md:flex items-center gap-4 ml-1 flex-shrink-0">
+              <Link
+                to="/seller/inventory"
+                className="text-[10px] font-bold tracking-[0.18em] uppercase text-zinc-400 dark:text-zinc-500 hover:text-[#e63b1f] transition-colors duration-200"
+              >
+                Dashboard
+              </Link>
+              <SellerMoreMenu navigate={navigate} />
+            </div>
           )}
 
           {/* Search bar — desktop */}
@@ -205,8 +252,8 @@ const Navbar = () => {
               />
             </button>
 
-            {/* Wishlist + Cart — logged in only */}
-            {user && (
+            {/* Wishlist + Cart — logged-in buyers only */}
+            {user && !isSeller && (
               <>
                 <div className="hidden md:block">
                   <NavIconBtn
@@ -271,16 +318,21 @@ const Navbar = () => {
                       label="Profile"
                       onClick={() => navigate("/profile")}
                     />
-                    <DropdownItem
-                      icon="ri-heart-3-line"
-                      label="Wishlist"
-                      onClick={() => navigate("/wishlist")}
-                    />
-                    <DropdownItem
-                      icon="ri-shopping-bag-3-line"
-                      label="Cart"
-                      onClick={() => navigate("/checkout/cart")}
-                    />
+
+                    {!isSeller && (
+                      <>
+                        <DropdownItem
+                          icon="ri-heart-3-line"
+                          label="Wishlist"
+                          onClick={() => navigate("/wishlist")}
+                        />
+                        <DropdownItem
+                          icon="ri-shopping-bag-3-line"
+                          label="Cart"
+                          onClick={() => navigate("/checkout/cart")}
+                        />
+                      </>
+                    )}
 
                     {isSeller && (
                       <DropdownItem
@@ -416,12 +468,15 @@ const Navbar = () => {
             />
 
             {user && (
+              <SidebarItem
+                icon="ri-user-3-line"
+                label="Profile"
+                onClick={() => goTo("/profile")}
+              />
+            )}
+
+            {user && !isSeller && (
               <>
-                <SidebarItem
-                  icon="ri-user-3-line"
-                  label="Profile"
-                  onClick={() => goTo("/profile")}
-                />
                 <SidebarItem
                   icon="ri-heart-3-line"
                   label={`Wishlist (${wishlistCount})`}
@@ -436,11 +491,25 @@ const Navbar = () => {
             )}
 
             {isSeller && (
-              <SidebarItem
-                icon="ri-store-2-line"
-                label="Seller Dashboard"
-                onClick={() => goTo("/seller/dashboard")}
-              />
+              <>
+                <SidebarItem
+                  icon="ri-store-2-line"
+                  label="Seller Dashboard"
+                  onClick={() => goTo("/seller/dashboard")}
+                />
+
+                <div className="pt-3">
+                  <SidebarSection label="Seller Tools" />
+                  {SELLER_MORE_LINKS.map((item) => (
+                    <SidebarItem
+                      key={item.path}
+                      icon={item.icon}
+                      label={item.label}
+                      onClick={() => goTo(item.path)}
+                    />
+                  ))}
+                </div>
+              </>
             )}
 
             <div className="pt-3">

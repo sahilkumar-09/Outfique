@@ -6,8 +6,8 @@ const productSlice = createSlice({
         sellerProducts: [],
         allProducts: [],
         searchResult: [],
-        category: []
-    },
+        category: [],
+    },  
     reducers: {
         setSellerProducts: (state, action) => {
             state.sellerProducts = action.payload
@@ -20,10 +20,33 @@ const productSlice = createSlice({
         },
         setCategory: (state, action) => {
             state.category = action.payload;
+        },
+        deleteProduct: (state, action) => {
+            const { productId } = action.payload
+            state.sellerProducts = state.sellerProducts.filter(
+                (product) => product._id !== productId
+            )
+            state.allProducts = state.allProducts.filter((product) => product._id !== productId
+            )
+            state.searchResult = state.searchResult.filter((product) => product._id !== productId) 
+        },
+        deleteVariant: (state, action) => {
+            const { variantId } = action.payload
+            const removeVariant = (products) => {
+                products.map(product => (
+                    {
+                        ...product, variants: product.variants.filter(
+                        (variant) => variant._id !== variantId
+                    )}
+                ))
+            }
+            state.sellerProducts = removeVariant(state.sellerProducts)
+            state.allProducts = removeVariant(state.allProducts)
+            state.searchResult = removeVariant(state.searchResult)
         }
     }
 }) 
 
-export const { setSellerProducts, setAllProducts, setSearchResult, setCategory } =
+export const { setSellerProducts, setAllProducts, setSearchResult, setCategory, deleteProduct, deleteVariant } =
   productSlice.actions;
 export default productSlice.reducer

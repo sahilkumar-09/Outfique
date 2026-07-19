@@ -180,62 +180,60 @@ const getProductByIdController = async (req, res) => {
  */
 
 const addProductVariantController = async (req, res) => {
+  const productId = req.params.productId;
+  const product = await products.findOne({
+    _id: productId,
+    seller: req.user._id,
+  });
 
-    const productId = req.params.productId;
-    const product = await products.findOne({
-      _id: productId,
-      seller: req.user._id,
-    });
+  const files = req.files;
+  const images = [];
 
-    const files = req.files;
-    const images = [];
+  if (files || files.length !== 0) {
+    (
+      await Promise.all(
+        files.map(async (file) => {
+          const image = await uploadImage({
+            buffer: file.buffer,
+            fileName: file.originalname,
+          });
 
-    if (files || files.length !== 0) {
-      (
-        await Promise.all(
-          files.map(async (file) => {
-            const image = await uploadImage({
-              buffer: file.buffer,
-              fileName: file.originalname,
-            });
+          return image;
+        }),
+      )
+    ).map((image) => images.push(image));
+  }
 
-            return image;
-          }),
-        )
-      ).map((image) => images.push(image));
-    }
+  const stock = req.body.stock;
+  const attributes = JSON.parse(req.body.attributes || "{}");
+  const price = req.body.amount;
+  const color = req.body.color;
 
-    const stock = req.body.stock;
-    const attributes = JSON.parse(req.body.attributes || "{}");
-    const price = req.body.amount;
-    const color = req.body.color;
+  product.variants.push({
+    productImages: images,
+    stock,
+    attributes,
+    price: {
+      amount: price,
+      currency: req.body.currency || product.price.currency,
+    },
+    color,
+  });
 
-    product.variants.push({
-      productImages: images,
+  await product.save();
+  // console.log(product, images, stock, attributes, price)
+
+  return res.status(201).json({
+    success: true,
+    message: "Variant created successfully",
+    product: {
       stock,
       attributes,
-      price: {
-        amount: price,
-        currency: req.body.currency || product.price.currency,
-      },
-      color
-    });
-
-    await product.save();
-    // console.log(product, images, stock, attributes, price)
-
-    return res.status(201).json({
-      success: true,
-      message: "Variant created successfully",
-      product: {
-        stock,
-        attributes,
-        price,
-        productImages: images,
-        color
-      },
-    });
-  
+      price,
+      productImages: images,
+      color,
+    },
+  });
 };
 
 const getSearchController = async (req, res) => {
@@ -311,7 +309,10 @@ const getProductBySlugController = async (req, res) => {
   const { slug, productSlug } = req.params;
   const { color, size } = req.query;
 
-  const product = await products.findOne({ productSlug }).populate("category").populate("seller", "fullName email contact");
+  const product = await products
+    .findOne({ productSlug })
+    .populate("category")
+    .populate("seller", "fullName email contact");
 
   if (!product) {
     return res.status(404).json({
@@ -334,10 +335,51 @@ const getProductBySlugController = async (req, res) => {
   });
 };
 
+const deleteVariantController = async (req, res) => {
+  try {
+    const { variantId } = req.params;
+    const sellerId = req.user._id;
+
+    const product = await products.findOneAndUpdate(
+      {
+        seller: sellerId,
+        "variants._id": variantId,
+      },
+      {
+        $pull: {
+          variants: { _id: variantId },
+        },
+      },
+      {
+        new: true,
+      },
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Variant not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Variant deleted successfully",
+      product,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export {
   addProductVariantController,
   createProductController,
   deleteController,
+  deleteVariantController,
   getAllProductsController,
   getAllSellerProductsController,
   getProductByIdController,

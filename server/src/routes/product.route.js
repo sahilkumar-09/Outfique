@@ -8,7 +8,8 @@ import {
   addProductVariantController,
   getSearchController,
   deleteController,
-  getProductBySlugController
+  getProductBySlugController,
+  deleteVariantController
 } from "../controllers/product.controller.js";
 import multer from "multer"
 import { createProductValidator } from "../validators/product.validator.js"
@@ -74,7 +75,16 @@ router.post(
 /**
  * @DELETE product by seller
  */
-
 router.delete("/:productId", sellerMiddleware, deleteController)
+
+/**
+ * @DELETE variant by seller
+ */
+
+router.delete("/details/:variantId", sellerMiddleware, deleteVariantController)
+
+/**
+ * @UPDATE product by seller
+ */
 
 export default router

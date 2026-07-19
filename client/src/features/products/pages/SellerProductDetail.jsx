@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronLeft, ImagePlus, Loader2, Plus, X } from "lucide-react";
+import { ChevronLeft, ImagePlus, Loader2, Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useProduct } from "../hooks/useProduct";
@@ -36,6 +36,19 @@ const ATTRIBUTE_KEYS = [
 // Two separate size systems: clothing sizes vs shoe sizes, toggled via `sizeType`.
 const CLOTHING_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 const SHOE_SIZES = ["5", "6", "7", "8", "9", "10", "11", "12"];
+const PANT_SIZES = [
+  "28",
+  "30",
+  "32",
+  "34",
+  "36",
+  "38",
+  "40",
+  "42",
+  "44",
+  "48",
+  "50",
+];
 
 const inputClass =
   "rounded-xl border-stone-200 dark:border-stone-800 bg-transparent focus-visible:ring-1 focus-visible:ring-stone-900 dark:focus-visible:ring-white";
@@ -60,7 +73,11 @@ const getVariantAmount = (variant) => variant?.price?.amount ?? variant?.price;
 
 const SellerProductDetail = () => {
   const reduceMotion = useReducedMotion();
-  const { handleAddProductVariants, handleGetProductById } = useProduct();
+  const {
+    handleAddProductVariants,
+    handleGetProductById,
+    handleDeleteVariant,
+  } = useProduct();
   const { productId } = useParams();
   const navigate = useNavigate();
 
@@ -79,6 +96,10 @@ const SellerProductDetail = () => {
     productImages: [],
   });
 
+  // delete-variant confirmation
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
@@ -94,6 +115,20 @@ const SellerProductDetail = () => {
     };
     if (productId) fetchProduct();
   }, [productId]);
+
+  // lock scroll + allow Escape while the confirm modal is open
+  useEffect(() => {
+    if (!deleteTarget) return;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && !deleting) setDeleteTarget(null);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [deleteTarget, deleting]);
 
   const handleAttributes = () => {
     setNewVariant((prev) => ({
@@ -165,9 +200,42 @@ const SellerProductDetail = () => {
     });
   };
 
-  // Size options depend on the Clothing/Shoes toggle, not the product category.
-  const SIZE_OPTIONS = sizeType === "shoe" ? SHOE_SIZES : CLOTHING_SIZES;
+  const confirmDeleteVariant = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await handleDeleteVariant(productId, deleteTarget._id);
+      setVariants((prev) => prev.filter((v) => v._id !== deleteTarget._id));
+      setDeleteTarget(null);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
+  // Size options depend on the Clothing/Shoes toggle, not the product category.
+  const PANT_CATEGORIES = [
+    "jeans",
+    "trouser",
+    "trousers",
+    "chino",
+    "chinos",
+    "jogger",
+    "joggers",
+    "pants",
+  ];
+
+  const isPantCategory = PANT_CATEGORIES.includes(
+    product?.category?.name?.toLowerCase() ||
+      product?.category?.slug?.toLowerCase(),
+  );
+
+  const SIZE_OPTIONS = isPantCategory
+    ? PANT_SIZES
+    : sizeType === "shoes"
+      ? SHOE_SIZES
+      : CLOTHING_SIZES;
   const submitVariantHandler = async () => {
     const attrs = {};
     newVariant.attributes.forEach((a) => {
@@ -200,7 +268,7 @@ const SellerProductDetail = () => {
 
   useEffect(() => {
     if (product) {
-      document.title = `${product.title} | Outfique`;
+      document.title = product.title + " | Outfique";
     }
   });
 
@@ -531,15 +599,43 @@ const SellerProductDetail = () => {
                     {variants.map((variant, index) => (
                       <motion.div
                         key={variant._id || index}
+                        layout
                         initial={reduceMotion ? {} : { opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
+                        exit={
+                          reduceMotion
+                            ? { opacity: 0 }
+                            : {
+                                opacity: 0,
+                                scale: 0.95,
+                                transition: { duration: 0.25, ease },
+                              }
+                        }
                         transition={{
                           duration: 0.35,
                           ease,
                           delay: index * 0.05,
                         }}
-                        className="rounded-2xl overflow-hidden ring-1 ring-stone-200 dark:ring-stone-800 bg-white dark:bg-stone-900"
+                        className="relative group rounded-2xl overflow-hidden ring-1 ring-stone-200 dark:ring-stone-800 bg-white dark:bg-stone-900"
                       >
+                        {deleting && deleteTarget?._id === variant._id && (
+                          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 dark:bg-black/60 backdrop-blur-[1px]">
+                            <Loader2 className="w-5 h-5 animate-spin text-stone-900 dark:text-white" />
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          aria-label="Delete variant"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteTarget(variant);
+                          }}
+                          className="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/90 dark:bg-stone-900/90 backdrop-blur border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300 flex items-center justify-center opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover:border-rose-300 hover:text-rose-600 dark:hover:border-rose-800 dark:hover:text-rose-400 transition-all duration-200"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+
                         <div className="aspect-[4/5] overflow-hidden bg-stone-100 dark:bg-stone-800">
                           <img
                             src={
@@ -595,6 +691,114 @@ const SellerProductDetail = () => {
           </>
         )}
       </div>
+
+      {/* Delete confirmation */}
+      <AnimatePresence>
+        {deleteTarget && (
+          <>
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm"
+              onClick={() => !deleting && setDeleteTarget(null)}
+            />
+            <motion.div
+              key="panel"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="delete-variant-title"
+              initial={{ opacity: 0, scale: 0.95, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ duration: 0.25, ease }}
+              className="fixed z-[71] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-sm rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-2xl p-6"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-14 h-14 rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-800 shrink-0">
+                  {deleteTarget.productImages?.[0]?.url ||
+                  deleteTarget.productImages?.[0]?.preview ? (
+                    <img
+                      src={
+                        deleteTarget.productImages[0].url ||
+                        deleteTarget.productImages[0].preview
+                      }
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <ImagePlus className="w-4 h-4 text-stone-300 dark:text-stone-600" />
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p
+                    id="delete-variant-title"
+                    className="text-sm font-semibold text-stone-900 dark:text-white truncate"
+                  >
+                    {formatPrice(
+                      getVariantAmount(deleteTarget),
+                      product?.price?.currency,
+                    )}{" "}
+                    variant
+                  </p>
+                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                    This action can't be undone
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-sm text-stone-600 dark:text-stone-400 mb-6 leading-relaxed">
+                Are you sure you want to delete this variant
+                {deleteTarget.attributes &&
+                  Object.keys(deleteTarget.attributes).length > 0 && (
+                    <>
+                      {" "}
+                      (
+                      {Object.entries(deleteTarget.attributes)
+                        .map(
+                          ([key, value]) =>
+                            `${key}: ${Array.isArray(value) ? value.join(", ") : value}`,
+                        )
+                        .join(" · ")}
+                      )
+                    </>
+                  )}
+                ? It will be removed from this product's listing immediately.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(null)}
+                  disabled={deleting}
+                  className="flex-1 h-11 rounded-xl border border-stone-200 dark:border-stone-800 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmDeleteVariant}
+                  disabled={deleting}
+                  className="flex-1 h-11 rounded-xl bg-rose-600 text-white text-sm font-semibold hover:bg-rose-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                >
+                  {deleting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    "Delete Variant"
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

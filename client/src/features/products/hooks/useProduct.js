@@ -9,9 +9,11 @@ import {
   createCategory,
   getAllCategory,
   getProductBySlug,
-  getProductDetailBySlug
+  getProductDetailBySlug,
+  deleteProductById,
+  deleteProductVariant
 } from "../service/product.api";
-import { setAllProducts, setCategory, setSearchResult, setSellerProducts } from "../state/product.slice";
+import { setAllProducts, setCategory, setSearchResult, setSellerProducts, deleteProduct, deleteVariant } from "../state/product.slice";
 
 export const useProduct = () => {
   const dispatch = useDispatch();
@@ -94,7 +96,17 @@ export const useProduct = () => {
     dispatch(setAllProducts(data.products));
     return data.products
   }
-  
+
+  const handleDeleteProduct = async (productId) => {
+    await deleteProductById(productId)
+    dispatch(deleteProduct(productId));
+  }
+
+  const handleDeleteVariant = async (variantId) => {
+    await deleteProductVariant(variantId)
+    dispatch(deleteVariant(variantId))
+  }
+
   return {
     handleCreateProducts,
     handleGetSellerProduct,
@@ -105,6 +117,8 @@ export const useProduct = () => {
     handleCreateCategory,
     handleGetAllCategory,
     handleGetProductBySlug,
-    handleGetProductDetailBySlug
+    handleGetProductDetailBySlug,
+    handleDeleteProduct,
+    handleDeleteVariant
   };
 };

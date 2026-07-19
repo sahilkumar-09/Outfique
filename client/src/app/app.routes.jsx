@@ -19,6 +19,7 @@ import Wishlist from "../features/wishlist/pages/Wishlist";
 import AppLayout from "./AppLayout";
 import NotFound from "./NotFound";
 import ResetPassword from "@/features/auth/pages/ResetPassword";
+import Address from "@/features/address/page/Address";
 
 export const router = createBrowserRouter([
   {
@@ -31,7 +32,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/reset/:resetToken",
-    element: <ResetPassword />
+    element: <ResetPassword />,
   },
   {
     element: <AppLayout />,
@@ -52,7 +53,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "/seller/dashboard",
+            path: "/seller/inventory",
             element: (
               <Protected role="seller">
                 <Dashboard />
@@ -83,7 +84,9 @@ export const router = createBrowserRouter([
       },
       {
         path: "/checkout/address/new",
-        
+        element: <Protected>
+          <Address />
+        </Protected>
       },
       {
         path: "/order/success",

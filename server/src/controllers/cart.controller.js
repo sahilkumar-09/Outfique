@@ -2,11 +2,11 @@ import { validatePaymentVerification } from "razorpay/dist/utils/razorpay-utils.
 import configure from "../config/config.js";
 import { getCartByUserId } from "../dao/cart.dao.js";
 import { stockVariant } from "../dao/product.dao.js";
+import addressModel from "../models/address.model.js";
 import carts from "../models/cart.models.js";
 import orders from "../models/order.model.js";
 import payments from "../models/payment.model.js";
 import products from "../models/product.models.js";
-import addressModel from "../models/address.model.js";
 import { createOrder } from "../services/payment.service.js";
 
 const addToCartController = async (req, res) => {
@@ -325,24 +325,27 @@ const createOrderController = async (req, res) => {
     });
   }
 
-  const { shippingAddress } = req.body;
   const address = await addressModel.findOne({
-    _id: shippingAddress,
-    user: req.user._id
-  })
+    isDefault: true,
+    user: req.user._id,
+  });
+
   if (!address) {
     return res.status(404).json({
       success: false,
-      message: "Address not found"
-    })
+      message: "Please add or select a default address",
+    });
   }
   const dbOrder = await orders.create({
     buyer: req.user._id,
 
     items: cart.items.map((item) => {
-      const variant = item.productId.variants.id(item.variantId);
+      const variant = Array.isArray(item.productId.variants) ? item.productId.variants.find((v) => v._id.equals(item.variantId)) : item.productId.variants
+
+      console.log(variant)
+      
       if (!variant) {
-        throw new Error("Variant not found");
+        throw new Error("Variant not found")
       }
 
       return {
@@ -355,16 +358,6 @@ const createOrderController = async (req, res) => {
         totalPrice: variant.price.amount * item.quantity,
       };
     }),
-
-    shippingAddress: {
-      fullName: address.fullName,
-      phone: address.phone,
-      address: address.address,
-      city: address.city,
-      state: address.state,
-      country: address.country,
-      postalCode: address.postalCode
-    },
     subTotal: cart.totalPrice,
     shippingCharge: 0,
     discount: 0,
@@ -433,16 +426,16 @@ const verifyOrderPaymentController = async (req, res) => {
 
     if (!isPaymentValid) {
       payment.status = "FAILED";
-      
+
       await payment.save();
 
-      const order = await orders.findById(payment.order)
+      const order = await orders.findById(payment.order);
 
       if (order) {
         order.paymentStatus = "FAILED";
         order.orderStatus = "CANCELLED";
 
-        await order.save()
+        await order.save();
       }
       return res.status(400).json({
         success: false,
@@ -461,25 +454,25 @@ const verifyOrderPaymentController = async (req, res) => {
     await payment.save();
     await order.save();
 
-    const cart = await carts.findOne({user: req.user._id})
-    if(cart){
-      cart.items = []
-      await cart.save()
+    const cart = await carts.findOne({ user: req.user._id });
+    if (cart) {
+      cart.items = [];
+      await cart.save();
     }
 
     for (const item of order.items) {
-      const product = await products.findById(item.product)
+      const product = await products.findById(item.product);
       if (!product) {
-        continue
+        continue;
       }
-      const variant = product.variants.id(item.variant)
+      const variant = product.variants.id(item.variant);
       if (!variant) {
-        continue
+        continue;
       }
-      variant.stock -= item.quantity
-      await product.save()
+      variant.stock -= item.quantity;
+      await product.save();
     }
-    
+
     return res.status(200).json({
       success: true,
       message: "Payment verified successfully",

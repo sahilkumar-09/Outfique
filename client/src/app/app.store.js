@@ -5,9 +5,11 @@ import cartReducers from "../features/cart/state/cart.slice.js"
 import profileReducer from "../features/profile/state/profile.slice.js";
 import wishlistReducer from "../features/wishlist/state/wishlist.state.js"
 import themeReducer from "../features/theme/state/theme.slice.js"
+import addressReducer from "../features/address/state/address.slice.js"
 
 export const store = configureStore({
     reducer: {
+        address: addressReducer,
         auth: authReducer,
         product: productReducer,
         cart: cartReducers,

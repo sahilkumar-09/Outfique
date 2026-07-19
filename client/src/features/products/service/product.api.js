@@ -44,6 +44,16 @@ export const getProductById = async (productId) => {
   }
 };
 
+export const deleteProductById = async (productId) => {
+  const response = await productApiInstance.delete(`/${productId}`)
+  return response.data
+}
+
+export const deleteProductVariant = async (variantId) => {
+  const response = await productApiInstance.delete(`/details/${variantId}`);
+  return response.data
+}
+
 export const searchProducts = async (search, page = 1, limit = 10) => {
   try {
     const response = await productApiInstance.get(`/product/search`, {
