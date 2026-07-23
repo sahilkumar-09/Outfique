@@ -53,7 +53,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "/seller/inventory",
+            path: "/seller/dashboard",
             element: (
               <Protected role="seller">
                 <Dashboard />

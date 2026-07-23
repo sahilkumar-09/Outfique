@@ -113,10 +113,16 @@ export const Product = ({ products: initialProducts }) => {
   const [loading, setLoading] = useState(!initialProducts);
   const [wishlist, setWishlist] = useState({});
   const { handleGetAllProducts } = useProduct();
-
+  const [filter, setFilter] = useState({
+    search: "",
+    category: "",
+    minPrice: "",
+    maxPrice: "",
+    sort: ""
+  })
   const fetchProducts = async () => {
     setLoading(true);
-    const res = await handleGetAllProducts();
+    const res = await handleGetAllProducts(filter);
     setProducts(res ?? []);
     setLoading(false);
   };
@@ -125,7 +131,7 @@ export const Product = ({ products: initialProducts }) => {
     if (!initialProducts) {
       fetchProducts();
     }
-  }, [initialProducts]);
+  }, [filter]);
 
   useEffect(() => {
     if (initialProducts) {

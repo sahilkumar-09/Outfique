@@ -34,9 +34,9 @@ const ATTRIBUTE_KEYS = [
 // size is the one attribute whose value is an array ("size": ["M","XS","L"])
 // rather than a single string — everything else stays plain text.
 // Two separate size systems: clothing sizes vs shoe sizes, toggled via `sizeType`.
-const CLOTHING_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
-const SHOE_SIZES = ["5", "6", "7", "8", "9", "10", "11", "12"];
-const PANT_SIZES = [
+const CLOTHING_SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
+
+const JEANS_SIZES = [
   "28",
   "30",
   "32",
@@ -46,9 +46,12 @@ const PANT_SIZES = [
   "40",
   "42",
   "44",
+  "46",
   "48",
   "50",
 ];
+
+const SHOE_SIZES = ["5", "6", "7", "8", "9", "10", "11", "12"];
 
 const inputClass =
   "rounded-xl border-stone-200 dark:border-stone-800 bg-transparent focus-visible:ring-1 focus-visible:ring-stone-900 dark:focus-visible:ring-white";
@@ -215,27 +218,36 @@ const SellerProductDetail = () => {
   };
 
   // Size options depend on the Clothing/Shoes toggle, not the product category.
-  const PANT_CATEGORIES = [
-    "jeans",
-    "trouser",
-    "trousers",
-    "chino",
-    "chinos",
-    "jogger",
-    "joggers",
-    "pants",
-  ];
+const JEANS_CATEGORIES = [
+  "jeans",
+  "pants",
+  "trouser",
+  "trousers",
+  "chino",
+  "chinos",
+  "jogger",
+  "joggers",
+];
 
-  const isPantCategory = PANT_CATEGORIES.includes(
-    product?.category?.name?.toLowerCase() ||
-      product?.category?.slug?.toLowerCase(),
-  );
+const SHOE_CATEGORIES = [
+  "shoe",
+  "shoes",
+  "sneaker",
+  "sneakers",
+  "boot",
+  "boots",
+  "loafer",
+  "loafers",
+  "slipper",
+  "sandals",
+];
 
-  const SIZE_OPTIONS = isPantCategory
-    ? PANT_SIZES
-    : sizeType === "shoes"
-      ? SHOE_SIZES
-      : CLOTHING_SIZES;
+const SIZE_OPTIONS =
+  sizeType === "clothes"
+    ? CLOTHING_SIZES
+    : sizeType === "jeans"
+      ? JEANS_SIZES
+      : SHOE_SIZES;
   const submitVariantHandler = async () => {
     const attrs = {};
     newVariant.attributes.forEach((a) => {
@@ -425,48 +437,60 @@ const SellerProductDetail = () => {
                           </Select>
 
                           {attr.key === "size" ? (
-                            <div className="flex-1 flex flex-col gap-2 pt-1">
-                              {/* Clothing / Shoes toggle — only shown for the "size" attribute */}
-                              <div className="flex rounded-full border border-stone-200 dark:border-stone-800 p-0.5 w-fit">
+                            <div className="flex-1 flex flex-col gap-3">
+                              <div className="flex rounded-full border border-stone-200 dark:border-stone-800 p-1 w-fit">
                                 <button
                                   type="button"
-                                  onClick={() => setSizeType("clothing")}
-                                  className={`px-3 py-1 text-xs font-medium rounded-full transition-colors duration-200 ${
-                                    sizeType === "clothing"
-                                      ? "bg-stone-900 text-white dark:bg-white dark:text-stone-900"
-                                      : "text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white"
+                                  onClick={() => setSizeType("clothes")}
+                                  className={`px-3 py-1 rounded-full text-xs ${
+                                    sizeType === "clothes"
+                                      ? "bg-stone-900 text-white"
+                                      : "text-stone-500"
                                   }`}
                                 >
-                                  Clothing
+                                  Clothes
                                 </button>
+
                                 <button
                                   type="button"
-                                  onClick={() => setSizeType("shoe")}
-                                  className={`px-3 py-1 text-xs font-medium rounded-full transition-colors duration-200 ${
-                                    sizeType === "shoe"
-                                      ? "bg-stone-900 text-white dark:bg-white dark:text-stone-900"
-                                      : "text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white"
+                                  onClick={() => setSizeType("jeans")}
+                                  className={`px-3 py-1 rounded-full text-xs ${
+                                    sizeType === "jeans"
+                                      ? "bg-stone-900 text-white"
+                                      : "text-stone-500"
+                                  }`}
+                                >
+                                  Jeans
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => setSizeType("shoes")}
+                                  className={`px-3 py-1 rounded-full text-xs ${
+                                    sizeType === "shoes"
+                                      ? "bg-stone-900 text-white"
+                                      : "text-stone-500"
                                   }`}
                                 >
                                   Shoes
                                 </button>
                               </div>
 
-                              <div className="flex flex-wrap gap-1.5">
+                              <div className="flex flex-wrap gap-2">
                                 {SIZE_OPTIONS.map((size) => {
                                   const selected =
                                     Array.isArray(attr.value) &&
                                     attr.value.includes(size);
+
                                   return (
                                     <button
                                       key={size}
                                       type="button"
                                       onClick={() => toggleSizeValue(idx, size)}
-                                      aria-pressed={selected}
-                                      className={`px-3 h-9 rounded-lg text-xs font-medium border transition-colors duration-200 ${
+                                      className={`px-3 h-9 rounded-lg border text-xs ${
                                         selected
-                                          ? "bg-stone-900 text-white border-stone-900 dark:bg-white dark:text-stone-900 dark:border-white"
-                                          : "border-stone-200 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-600"
+                                          ? "bg-stone-900 text-white"
+                                          : "border-stone-300"
                                       }`}
                                     >
                                       {size}

@@ -91,9 +91,9 @@ export const getAllCategory = async () => {
   return response.data
 }
 
-export const getProductBySlug = async (slug) => {
-  const response = await categoryApiInstance.get(`/${slug}`);
-  return response.data
+export const getProductBySlug = async (slug, params={}) => {
+  const response = await categoryApiInstance.get(`/${slug}`, {params});
+  return response.data  
 }
 
 export const getProductDetailBySlug = async (slug, productSlug, color, size ) => {

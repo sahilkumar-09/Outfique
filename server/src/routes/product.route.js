@@ -83,8 +83,4 @@ router.delete("/:productId", sellerMiddleware, deleteController)
 
 router.delete("/details/:variantId", sellerMiddleware, deleteVariantController)
 
-/**
- * @UPDATE product by seller
- */
-
 export default router

@@ -91,11 +91,11 @@ export const useProduct = () => {
     return data.category
   }
 
-  const handleGetProductBySlug = async (slug) => {
-    const data = await getProductBySlug(slug)
+  const handleGetProductBySlug = async (slug, params = {}) => {
+    const data = await getProductBySlug(slug, params);
     dispatch(setAllProducts(data.products));
-    return data.products
-  }
+    return data.products;
+  };
 
   const handleDeleteProduct = async (productId) => {
     await deleteProductById(productId)

@@ -71,6 +71,7 @@ const Wishlist = () => {
         item.variantId,
       );
 
+
       if (res?.success) {
         setWishlistData((prev) => prev.filter((i) => i._id !== item._id));
       }
@@ -95,10 +96,12 @@ const Wishlist = () => {
         item.productId._id,
         item.variantId,
       );
+      console.log(res)
 
       if (res.success) {
         setWishlistData((prev) => prev.filter((i) => i._id !== item._id));
       }
+      
     } catch (error) {
       console.log(error.message);
     } finally {

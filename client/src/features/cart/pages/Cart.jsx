@@ -196,10 +196,6 @@ const Cart = () => {
     const order = await handleAddToCartOrder({
       shippingAddress: selectedAddress._id,
     });
-    console.log(order);
-    console.log(order.amount);
-    console.log(order.currency);
-    console.log(order.id);
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY,
       amount: order.amount,
@@ -234,21 +230,21 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0d0d0d] text-zinc-900 dark:text-white transition-colors">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-10">
         {/* Heading */}
-        <div className="mb-10">
+        <div className="mb-6 sm:mb-8 md:mb-10">
           <p className="text-xs uppercase tracking-[0.25em] text-zinc-500 dark:text-zinc-400 mb-2">
             Your Selection
           </p>
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
             Shopping Cart
           </h1>
           <div className="w-14 h-px bg-zinc-200 dark:bg-white/10 mt-4" />
         </div>
 
-        <div className="grid lg:grid-cols-[1fr_360px] gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8 lg:gap-12">
           {/* Cart Items */}
-          <div className="space-y-6">
+          <div className="space-y-5 sm:space-y-6">
             <AnimatePresence initial={false}>
               {cartItem?.map((item) => {
                 const product = item.productId;
@@ -276,10 +272,10 @@ const Cart = () => {
                     }
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.35, ease }}
-                    className="grid grid-cols-[100px_1fr] md:grid-cols-[140px_1fr] gap-5 border-b border-zinc-200 dark:border-white/10 pb-6"
+                    className="grid grid-cols-[92px_1fr] sm:grid-cols-[120px_1fr] md:grid-cols-[140px_1fr] gap-4 sm:gap-5 border-b border-zinc-200 dark:border-white/10 pb-5 sm:pb-6"
                   >
                     {/* Product Image */}
-                    <div className="bg-zinc-100 dark:bg-white/[0.06] overflow-hidden rounded-xl">
+                    <div className="bg-zinc-100 dark:bg-white/[0.06] overflow-hidden rounded-xl aspect-[3/4] sm:aspect-auto">
                       <img
                         src={image}
                         alt={product.title}
@@ -288,13 +284,13 @@ const Cart = () => {
                     </div>
 
                     {/* Product Info */}
-                    <div className="flex flex-col justify-between">
+                    <div className="flex flex-col justify-between min-w-0">
                       <div>
-                        <h2 className="text-lg md:text-xl font-medium mb-2">
+                        <h2 className="text-base sm:text-lg md:text-xl font-medium mb-1.5 sm:mb-2 line-clamp-2">
                           {product.title}
                         </h2>
 
-                        <div className="flex flex-wrap gap-4 text-sm text-zinc-500 dark:text-zinc-400 mb-3 uppercase tracking-wide">
+                        <div className="flex flex-wrap gap-x-3 gap-y-1 sm:gap-4 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mb-2.5 sm:mb-3 uppercase tracking-wide">
                           {selectedVariant &&
                             Object.entries(
                               selectedVariant?.attributes || {},
@@ -305,13 +301,13 @@ const Cart = () => {
                             ))}
                         </div>
 
-                        <p className="text-lg font-semibold text-zinc-900 dark:text-white">
+                        <p className="text-base sm:text-lg font-semibold text-zinc-900 dark:text-white">
                           {formatPrice(
                             variantPrice?.amount,
                             variantPrice?.currency,
                           )}
                         </p>
-                        <small className="text-zinc-400 dark:text-zinc-500 tracking-[0.15em] uppercase">
+                        <small className="text-zinc-400 dark:text-zinc-500 tracking-[0.15em] uppercase text-[11px] sm:text-xs">
                           Stocks -{" "}
                           <span className="font-semibold">
                             {selectedVariant.stock}
@@ -320,7 +316,7 @@ const Cart = () => {
 
                         {variantPrice?.amount !== cartPrice?.amount && (
                           <div className="flex items-center gap-3 mt-1.5">
-                            <div className="text-xs font-semibold tracking-wide">
+                            <div className="text-[11px] sm:text-xs font-semibold tracking-wide">
                               {variantPrice.amount < cartPrice.amount ? (
                                 <span className="text-rose-500 dark:text-rose-400">
                                   Price Increased to{" "}
@@ -344,7 +340,7 @@ const Cart = () => {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex items-center justify-between mt-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3 mt-3 sm:mt-4">
                         <div className="flex items-center border border-zinc-200 dark:border-white/10 overflow-hidden rounded-full">
                           <motion.button
                             whileTap={{ scale: 0.9 }}
@@ -365,11 +361,11 @@ const Cart = () => {
                             }}
                             disabled={item.quantity <= 1}
                             aria-label="Decrease quantity"
-                            className="cursor-pointer px-3 py-2 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="cursor-pointer px-3 py-2.5 sm:py-2 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             <i className="ri-subtract-line text-sm" />
                           </motion.button>
-                          <span className="px-4 py-2 text-sm w-8 text-center">
+                          <span className="px-3 sm:px-4 py-2.5 sm:py-2 text-sm w-8 text-center">
                             <AnimatedValue value={item.quantity} />
                           </span>
                           <motion.button
@@ -391,18 +387,18 @@ const Cart = () => {
                             }}
                             disabled={selectedVariant.stock <= item.quantity}
                             aria-label="Increase quantity"
-                            className="cursor-pointer px-3 py-2 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                            className="cursor-pointer px-3 py-2.5 sm:py-2 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed"
                           >
                             <i className="ri-add-line text-sm" />
                           </motion.button>
                         </div>
 
                         <button
-                          className="cursor-pointer h-5 w-5 flex items-center justify-center text-zinc-400 hover:text-[#e63b1f] dark:text-zinc-500 dark:hover:text-[#e63b1f] transition-colors"
+                          className="cursor-pointer h-9 w-9 sm:h-5 sm:w-5 -mr-2 sm:mr-0 flex items-center justify-center text-zinc-400 hover:text-[#e63b1f] dark:text-zinc-500 dark:hover:text-[#e63b1f] transition-colors"
                           aria-label="Remove item"
                           onClick={() => handleRemoveItem(item)}
                         >
-                          <i className="ri-delete-bin-line text-base" />
+                          <i className="ri-delete-bin-line text-lg sm:text-base" />
                         </button>
                       </div>
                     </div>
@@ -413,9 +409,9 @@ const Cart = () => {
           </div>
 
           {/* Right column: delivery address + summary, scroll together */}
-          <div className="flex flex-col gap-4 h-fit sticky top-10">
+          <div className="flex flex-col gap-4 h-fit lg:sticky lg:top-10">
             {/* Delivering to */}
-            <div className="rounded-2xl bg-white dark:bg-[#141414] border border-zinc-200 dark:border-white/10 shadow-sm p-4">
+            <div className="rounded-2xl bg-white dark:bg-[#141414] border border-zinc-200 dark:border-white/10 shadow-sm p-3.5 sm:p-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="w-9 h-9 rounded-full bg-[#e63b1f]/10 flex items-center justify-center shrink-0">
@@ -464,7 +460,7 @@ const Cart = () => {
             </div>
 
             {/* Summary */}
-            <div className="rounded-2xl bg-white dark:bg-[#141414] border border-zinc-200 dark:border-white/10 shadow-sm p-6">
+            <div className="rounded-2xl bg-white dark:bg-[#141414] border border-zinc-200 dark:border-white/10 shadow-sm p-5 sm:p-6">
               <p className="text-xs uppercase tracking-[0.25em] text-zinc-500 dark:text-zinc-400 mb-4">
                 The Total
               </p>
@@ -487,7 +483,7 @@ const Cart = () => {
                 </div>
               </div>
 
-              <div className="flex justify-between mt-5 mb-6 text-lg font-semibold">
+              <div className="flex justify-between mt-5 mb-6 text-base sm:text-lg font-semibold">
                 <span>Total</span>
                 <span>
                   <AnimatedValue value={formatPrice(subtotal)} />
@@ -544,10 +540,10 @@ const Cart = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 16 }}
               transition={{ duration: 0.25, ease }}
-              className="fixed z-[71] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-lg max-h-[80vh] flex flex-col rounded-2xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#141414] shadow-2xl"
+              className="fixed z-[71] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-lg max-h-[85vh] sm:max-h-[80vh] flex flex-col rounded-2xl border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#141414] shadow-2xl"
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-100 dark:border-white/[0.07] shrink-0">
+              <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-zinc-100 dark:border-white/[0.07] shrink-0">
                 <h2
                   id="select-address-title"
                   className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-900 dark:text-white"
@@ -565,7 +561,7 @@ const Cart = () => {
               </div>
 
               {/* Saved addresses label + add new */}
-              <div className="flex items-center justify-between px-6 pt-5 pb-2 shrink-0">
+              <div className="flex items-center justify-between px-4 sm:px-6 pt-4 sm:pt-5 pb-2 shrink-0">
                 <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                   Saved Addresses
                 </span>
@@ -583,7 +579,7 @@ const Cart = () => {
               </div>
 
               {/* Address list */}
-              <div className="flex-1 overflow-y-auto px-6 py-2">
+              <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-2">
                 {addressData.length === 0 ? (
                   <p className="text-sm text-zinc-500 dark:text-zinc-400 py-10 text-center">
                     No saved addresses yet.

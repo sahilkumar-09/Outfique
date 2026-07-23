@@ -280,7 +280,7 @@ text-white
 hover:bg-[#ff4f30] text-xs font-bold uppercase rounded border cursor-pointer hover:text-zinc-900 hover:bg-white hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 mt-8"
                 style={{ letterSpacing: "0.15em" }}
               >
-                Create Account
+                Sign In
               </button>
             </form>
           </div>
